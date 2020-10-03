@@ -5,7 +5,6 @@ import com.bluemsun.BBS.dto.UserExecution;
 import com.bluemsun.BBS.entity.User;
 import com.bluemsun.BBS.enums.UserEnum;
 import com.bluemsun.BBS.service.UserService;
-import com.bluemsun.BBS.util.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
