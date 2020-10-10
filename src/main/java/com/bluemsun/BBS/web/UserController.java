@@ -1,11 +1,12 @@
 package com.bluemsun.BBS.web;
 
-import com.bluemsun.BBS.dao.UserDao;
-import com.bluemsun.BBS.dto.UserExecution;
+import com.bluemsun.BBS.common.Const;
+import com.bluemsun.BBS.common.ServerResponse;
+import com.bluemsun.BBS.entity.ResponseData;
 import com.bluemsun.BBS.entity.User;
 import com.bluemsun.BBS.service.UserService;
-import com.bluemsun.BBS.util.JSONUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.bluemsun.BBS.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,10 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.security.GeneralSecurityException;
+
 
 @Controller
 @RequestMapping("/user")
@@ -24,91 +28,145 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-    @Autowired
-    private UserDao userDao;
 
     /**
      * 用户登陆
      * status: 1 登陆失败
-     *         0 登陆成功，并返回用户
-     * @param request
+     * 0 登陆成功，并返回用户
+     *
+     * @param user
+     * @param session
+     * @param httpServletResponse
      * @return
-     * @throws IOException
      */
-    @RequestMapping(value = "/login" ,method = RequestMethod.POST)
+    @RequestMapping(value = "/login.do", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String,Object> login(@RequestBody User user, HttpServletRequest request) throws IOException{
-        //todo 获取前端发送的用户名及密码
-        Map<String, Object> modelMap = new HashMap<String, Object>();
-        UserExecution userExecution = userService.login(user);
-        if(userExecution.getState() == 0) {
-            modelMap.put("status",1);
-            modelMap.put("msg",userExecution.getStateInfo());
-            return modelMap;
+    public ServerResponse<User> login(@RequestBody User user, HttpSession session, HttpServletResponse httpServletResponse) {
+        ServerResponse<User> response = userService.login(user);
+        if (response.isSuccess()) {
+            CookieUtil.writeLoginToken(httpServletResponse, session.getId());
+            RedisPoolUtil.setEx(session.getId(), JsonUtil.obj2String(response.getData()), Const.RedisCacheExtime.REDIES_SESSION_EXTIME);
         }
-        modelMap.put("status",0);
-        modelMap.put("msg",userExecution.getStateInfo());
-        modelMap.put("currentUser",userExecution.getUser());
-        return modelMap;
+        return response;
     }
 
     /**
-     * 校验用户名
-     * status: 2 表示用户名为空
-     *         1 表示该用户名已存在
-     *         0 表示该用户名可以使用
-     * @param
+     * 用户注册时校验用户名是否存在
+     *
+     * @param user
+     * @param session
+     * @param httpServletResponse
      * @return
      */
-    @RequestMapping(value = "/checkusername" ,method = RequestMethod.GET)
+    @RequestMapping(value = "/checkUsername", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String,Object> checkUsername(HttpServletRequest request) throws IOException {
-        String jsonString = JSONUtil.getJson(request);
-        Map<String, Object> modelMap = new HashMap<String, Object>();
-        ObjectMapper mapper = new ObjectMapper();
-        User user = mapper.readValue(jsonString,User.class);
-        String username = user.getUsername();
-        UserExecution userExecution = userService.checkUsername(username);
-        if(userExecution.getState() == 4) {
-            modelMap.put("status",2);
-        } else {
-            if(userExecution.getState() == 3) {
-                modelMap.put("status",1);
-                modelMap.put("msg",userExecution.getStateInfo());
-                return modelMap;
-            }
-            modelMap.put("status",0);
-        }
-        modelMap.put("msg",userExecution.getStateInfo());
-        return modelMap;
+    public ServerResponse<String> checkUsername(@RequestBody User user, HttpSession session, HttpServletResponse httpServletResponse) {
+        ServerResponse<String> response = userService.checkUsername(user.getUsername());
+        return response;
     }
 
     /**
      * 用户注册
-     * @param request
-     * status: 1 注册失败
-     *         0 注册成功
+     *
+     * @param user
+     * @param httpServletResponse
      * @return
-     * @throws IOException
      */
-    @RequestMapping(value = "/register" ,method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String,Object> register(HttpServletRequest request) throws IOException {
-        String jsonString = JSONUtil.getJson(request);
-        Map<String, Object> modelMap = new HashMap<String, Object>();
-        ObjectMapper mapper = new ObjectMapper();
-        User user = mapper.readValue(jsonString,User.class);
-        UserExecution userExecution = userService.register(user);
-        if(userExecution.getState() == 6){
-            modelMap.put("status",1);
-            modelMap.put("msg",userExecution.getStateInfo());
-            return modelMap;
-        }
-        user = userDao.selectLogin(user.getUsername(),user.getPassword());
-
-        modelMap.put("status",0);
-        modelMap.put("msg",userExecution.getStateInfo());
-        modelMap.put("currentUser",user);
-        return modelMap;
+    public ServerResponse<User> register(@RequestBody User user, HttpServletResponse httpServletResponse) {
+        ServerResponse<User> response = userService.register(user);
+        return response;
     }
-}
+
+    /**
+     * 发送绑定邮箱验证码，有效期为10分钟
+     *
+     * @param user
+     * @param httpServletRequest
+     * @return
+     * @throws GeneralSecurityException
+     * @throws IOException
+     * @throws MessagingException
+     */
+    @RequestMapping(value = "/bindMail.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<String> bindMail(@RequestBody User user, HttpServletRequest httpServletRequest) throws GeneralSecurityException, IOException, MessagingException {
+        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+        String jsonStr = RedisPoolUtil.get(loginToken);
+        User user1 = JsonUtil.string2Obj(jsonStr, User.class);
+        user1.setEmail(user.getEmail());
+        String verifyCode = VerifyCodeUtil.verifyCode();
+        MailUtil.SendTextMial(user1, verifyCode);
+        RedisPoolUtil.setEx(String.valueOf(user1.getUserId()), verifyCode, 10 * 60);
+        return ServerResponse.createBySuccessMessage("发送邮件成功");
+    }
+
+    /**
+     * 核对邮箱校验码
+     *
+     * @param responseData
+     * @param httpServletRequest
+     * @return
+     */
+    @RequestMapping(value = "/checkVerificationCode.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<User> checkVerificationCode(@RequestBody ResponseData responseData, HttpServletRequest httpServletRequest) {
+        String verificationCode = responseData.getData();
+        if (verificationCode == null || verificationCode.equals("")) {
+            return ServerResponse.createByErrorCodeMessage(2, "验证码为空");
+        }
+        String email = responseData.getEmail();
+        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+        String jsonStr = RedisPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
+        User user1 = new User();
+        user1.setUserId(user.getUserId());
+        user1.setEmail(email);
+        String strFromRedis = RedisPoolUtil.get(String.valueOf(user.getUserId()));
+        if (strFromRedis == null) {
+            return ServerResponse.createByErrorCodeMessage(3, "验证码已过期，请重新发送！");
+        }
+        if (verificationCode.equals(strFromRedis)) {
+            ServerResponse<User> response = userService.bindMail(user1);
+            RedisPoolUtil.del(String.valueOf(user.getUserId()));
+            return response;
+        }
+        return ServerResponse.createByErrorMessage("验证码错误！");
+    }
+
+    /**
+     * 跳转加载信息
+     *
+     * @param httpServletRequest
+     * @param httpServletResponse
+     * @return
+     */
+    @RequestMapping(value = "/onLoad.do",method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<User> onLoad(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+        String jsonStr = RedisPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(jsonStr,User.class);
+        ServerResponse<User> response = userService.onLoadUser(user.getUserId());
+        return response;
+    }
+
+
+        /**
+         * 退出登陆
+         *
+         * @param httpServletRequest
+         * @param httpServletResponse
+         * @return
+         */
+        @RequestMapping(value = "/logout.do", method = RequestMethod.POST)
+        @ResponseBody
+        public ServerResponse<String> logout (HttpServletRequest httpServletRequest, HttpServletResponse
+        httpServletResponse){
+            String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+            CookieUtil.delLoginToken(httpServletRequest, httpServletResponse);
+            RedisPoolUtil.del(loginToken);
+            return ServerResponse.createBySuccessMessage("退出登陆成功");
+        }
+    }

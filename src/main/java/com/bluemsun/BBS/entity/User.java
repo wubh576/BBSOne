@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class User {
     // 主键ID
-    private Long userId;
+    private Integer userId;
     // 用户名称
     private String username;
     // 用户密码
@@ -24,11 +24,11 @@ public class User {
     // 用户等级
     private Integer userRank;
 
-    public Long getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 

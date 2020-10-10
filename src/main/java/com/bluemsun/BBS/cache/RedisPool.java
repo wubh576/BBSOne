@@ -1,4 +1,4 @@
-package com.bluemsun.BBS.common;
+package com.bluemsun.BBS.cache;
 
 import com.bluemsun.BBS.util.PropertiesUtil;
 import redis.clients.jedis.Jedis;

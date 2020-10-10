@@ -1,6 +1,6 @@
 package com.bluemsun.BBS.util;
 
-import com.bluemsun.BBS.common.RedisPool;
+import com.bluemsun.BBS.cache.RedisPool;
 import redis.clients.jedis.Jedis;
 
 public class RedisPoolUtil {
