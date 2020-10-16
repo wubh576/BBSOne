@@ -15,7 +15,7 @@ public class User {
     private String email;
     // 用户电话
     private String phone;
-    // 用户类别：0表示普通用户，1表示超级管理员
+    // 用户类别：0表示普通用户，3表示超级管理员
     private Integer userType;
     // 创建时间
     private Date createTime;

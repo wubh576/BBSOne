@@ -24,23 +24,11 @@
 		(#{username},#{password},#{phone},#{profileImg},#{createTime},#{lastEditTime})
 	</insert>
 
-	<update id="updateEmailByUserId" >
-		UPDATE tb_user
-		SET `email` = #{email}
-		WHERE `user_id` = #{userId}
-	</update>
-
 	<select id="selectByUserId" resultType="com.bluemsun.BBS.entity.User">
 		SELECT `user_id`,`username`,`password`,`email`,`phone`,`user_type`,`create_time`,`last_edit_time`,`profile_img`,`user_rank`
 		FROM tb_user
 		WHERE user_id = #{userId}
 	</select>
-
-	<update id="updateUserImgByUserId" parameterType="com.bluemsun.BBS.entity.User">
-		UPDATE tb_user
-		SET `profile_img`=#{profileImg},`last_edit_time`=#{lastEditTime})
-		WHERE user_id = #{userId}
-	</update>
 
 	<update id="updateByPrimaryKeySelective" parameterType="com.bluemsun.BBS.entity.User" >
 		UPDATE tb_user
@@ -67,5 +55,11 @@
 		</set>
 		WHERE `user_id` = #{userId,jdbcType=INTEGER}
 	</update>
+
+	<select id="checkEmail" parameterType="string" resultType="int">
+		SELECT count(1) FROM tb_user
+		WHERE email = #{email}
+	</select>
+
 
 </mapper>

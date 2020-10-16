@@ -5,9 +5,9 @@
 <mapper namespace="com.bluemsun.BBS.dao.BlogDao">
     <insert id="insertBlog" parameterType="com.bluemsun.BBS.entity.Blog">
         INSERT INTO
-		tb_blog(`blog_title`,`blog_author_id`,`create_time`,`blog_content`)
+		tb_blog(`blog_title`,`blog_plate_id`,`blog_author_id`,`create_time`,`last_edit_time`,`blog_content`)
 		VALUES
-		(#{blogTitle},#{blogAuthorId},#{createTime},#{blogContent})
+		(#{blogTitle},#{blogPlateId},#{blogAuthorId},#{createTime},#{lastEditTime},#{blogContent})
     </insert>
     <select id="viewBlogByBlogId" resultType="com.bluemsun.BBS.entity.Blog">
         SELECT `blog_id`,`blog_title`,`blog_author_id`,`create_time`,`blog_content`

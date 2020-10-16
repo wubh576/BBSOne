@@ -17,7 +17,7 @@ public class UserDaoTest extends BaseTest {
         String username = "admin";
         String password = "admin";
         User user = new User();
-//        user = userDao.queryUserByUsernameAndPassword(username,password);
+        user = userDao.selectLogin(username,password);
         System.out.println(user);
     }
 }

@@ -4,6 +4,7 @@ import com.bluemsun.BBS.common.ServerResponse;
 import com.bluemsun.BBS.dao.UserDao;
 import com.bluemsun.BBS.entity.User;
 import com.bluemsun.BBS.service.UserService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,15 +63,37 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(2, "用户为空");
         }
+        int count = userDao.checkUsername(user.getUsername());
+        if (count == 1) {
+            return ServerResponse.createByErrorCodeMessage(3, "非法注册，求求了，请莫破坏孩子的系统，该用户名已存在，注册失败");
+        }
         user.setCreateTime(new Date());
         user.setLastEditTime(new Date());
-        user.setProfileImg("http://bluesun.natapp1.cc/uploads/test.png");
+        user.setProfileImg("http://bluemsum.tech:8080/uploads/test.jpg");
         int result = userDao.insertUser(user);
         if (result == 1) {
             User user1 = userDao.selectLogin(user.getUsername(), user.getPassword());
             return ServerResponse.createBySuccess("注册成功，用户信息如下", user1);
         }
         return ServerResponse.createByError();
+    }
+
+    /**
+     * 查验邮箱是否重复
+     *
+     * @param email
+     * @return
+     */
+    public ServerResponse<String> checkEmail(String email) {
+        if (StringUtils.isEmpty(email)) {
+            return ServerResponse.createByErrorMessage("邮箱为空");
+        }
+        int count = 0;
+        count = userDao.checkEmail(email);
+        if (count == 1) {
+            return ServerResponse.createByErrorCodeMessage(4, "该邮箱已被绑定");
+        }
+        return ServerResponse.createBySuccessMessage("该邮箱可用，已成功发送验证码");
     }
 
     /**
@@ -81,8 +104,8 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public ServerResponse<User> bindMail(User user) {
-        if(user == null) {
-            return ServerResponse.createByErrorCodeMessage(2, "用户为空");
+        if (user == null) {
+            return ServerResponse.createByErrorNotLogin();
         }
         int result = userDao.updateByPrimaryKeySelective(user);
         if (result == 1) {
@@ -119,7 +142,28 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public ServerResponse<User> onLoadUser(int userId) {
+        if (userId == 0) {
+            return ServerResponse.createByErrorMessage("发生错误");
+        }
         User user = userDao.selectByUserId(userId);
         return ServerResponse.createBySuccess("加载成功", user);
+    }
+
+    /**
+     * 更新密码
+     *
+     * @param user
+     * @return
+     */
+    public ServerResponse<User> updatePassword(User user) {
+        if(user == null) {
+            return ServerResponse.createByErrorCodeMessage(2,"user为空");
+        }
+        int result = userDao.updateByPrimaryKeySelective(user);
+        if(result == 1) {
+            User user1 = userDao.selectByUserId(user.getUserId());
+            return ServerResponse.createBySuccess("密码更新成功,返回最新个人信息",user1);
+        }
+        return ServerResponse.createByErrorMessage("发生错误，密码更新失败");
     }
 }

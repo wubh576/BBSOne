@@ -53,5 +53,21 @@ public interface UserService {
      */
     ServerResponse<User> onLoadUser(int userId);
 
+    /**
+     * 验证邮箱是否重复
+     *
+     * @param email
+     * @return
+     */
+    ServerResponse<String> checkEmail(String email);
+
+    /**
+     * 更改密码
+     *
+     * @param user
+     * @return
+     */
+    ServerResponse<User> updatePassword(User user);
+
 
 }

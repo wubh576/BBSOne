@@ -1,12 +1,12 @@
-package com.bluemsun.BBS.web;
+package com.bluemsun.BBS.web.reception;
 
 import com.bluemsun.BBS.common.Const;
 import com.bluemsun.BBS.common.ServerResponse;
 import com.bluemsun.BBS.entity.ResponseData;
 import com.bluemsun.BBS.entity.User;
 import com.bluemsun.BBS.service.UserService;
-
 import com.bluemsun.BBS.util.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
@@ -35,17 +34,19 @@ public class UserController {
      * 0 登陆成功，并返回用户
      *
      * @param user
-     * @param session
      * @param httpServletResponse
      * @return
      */
     @RequestMapping(value = "/login.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<User> login(@RequestBody User user, HttpSession session, HttpServletResponse httpServletResponse) {
+    public ServerResponse<User> login(@RequestBody User user, HttpServletResponse httpServletResponse) {
+        System.out.println(user);
+        String username = user.getUsername();
         ServerResponse<User> response = userService.login(user);
         if (response.isSuccess()) {
-            CookieUtil.writeLoginToken(httpServletResponse, session.getId());
-            RedisPoolUtil.setEx(session.getId(), JsonUtil.obj2String(response.getData()), Const.RedisCacheExtime.REDIES_SESSION_EXTIME);
+            String loginToken = TokenUtil.setToken();
+            RedisPoolUtil.setEx(loginToken, JsonUtil.obj2String(response.getData()), Const.RedisCacheExtime.REDIES_SESSION_EXTIME);
+            httpServletResponse.addHeader("loginToken", loginToken);
         }
         return response;
     }
@@ -54,13 +55,11 @@ public class UserController {
      * 用户注册时校验用户名是否存在
      *
      * @param user
-     * @param session
-     * @param httpServletResponse
      * @return
      */
     @RequestMapping(value = "/checkUsername", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<String> checkUsername(@RequestBody User user, HttpSession session, HttpServletResponse httpServletResponse) {
+    public ServerResponse<String> checkUsername(@RequestBody User user) {
         ServerResponse<String> response = userService.checkUsername(user.getUsername());
         return response;
     }
@@ -69,12 +68,11 @@ public class UserController {
      * 用户注册
      *
      * @param user
-     * @param httpServletResponse
      * @return
      */
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<User> register(@RequestBody User user, HttpServletResponse httpServletResponse) {
+    public ServerResponse<User> register(@RequestBody User user) {
         ServerResponse<User> response = userService.register(user);
         return response;
     }
@@ -92,14 +90,20 @@ public class UserController {
     @RequestMapping(value = "/bindMail.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> bindMail(@RequestBody User user, HttpServletRequest httpServletRequest) throws GeneralSecurityException, IOException, MessagingException {
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+        String loginToken = httpServletRequest.getHeader("loginToken");
         String jsonStr = RedisPoolUtil.get(loginToken);
+        if (StringUtils.isEmpty(jsonStr)) {
+            return ServerResponse.createByErrorNotLogin();
+        }
         User user1 = JsonUtil.string2Obj(jsonStr, User.class);
         user1.setEmail(user.getEmail());
-        String verifyCode = VerifyCodeUtil.verifyCode();
-        MailUtil.SendTextMial(user1, verifyCode);
-        RedisPoolUtil.setEx(String.valueOf(user1.getUserId()), verifyCode, 10 * 60);
-        return ServerResponse.createBySuccessMessage("发送邮件成功");
+        ServerResponse<String> response = userService.checkEmail(user.getEmail());
+        if (response.isSuccess()) {
+            String verifyCode = VerifyCodeUtil.verifyCode();
+            MailUtil.SendTextMial(user1, verifyCode);
+            RedisPoolUtil.setEx(String.valueOf(user1.getUserId()), verifyCode, 10 * 60);
+        }
+        return response;
     }
 
     /**
@@ -112,13 +116,16 @@ public class UserController {
     @RequestMapping(value = "/checkVerificationCode.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<User> checkVerificationCode(@RequestBody ResponseData responseData, HttpServletRequest httpServletRequest) {
+        String loginToken = httpServletRequest.getHeader("loginToken");
+        String jsonStr = RedisPoolUtil.get(loginToken);
+        if (StringUtils.isEmpty(jsonStr)) {
+            return ServerResponse.createByErrorNotLogin();
+        }
         String verificationCode = responseData.getData();
-        if (verificationCode == null || verificationCode.equals("")) {
+        if (StringUtils.isEmpty(verificationCode)) {
             return ServerResponse.createByErrorCodeMessage(2, "验证码为空");
         }
         String email = responseData.getEmail();
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        String jsonStr = RedisPoolUtil.get(loginToken);
         User user = JsonUtil.string2Obj(jsonStr, User.class);
         User user1 = new User();
         user1.setUserId(user.getUserId());
@@ -129,8 +136,10 @@ public class UserController {
         }
         if (verificationCode.equals(strFromRedis)) {
             ServerResponse<User> response = userService.bindMail(user1);
-            RedisPoolUtil.del(String.valueOf(user.getUserId()));
-            return response;
+            if (response.isSuccess()) {
+                RedisPoolUtil.del(String.valueOf(user.getUserId()));
+                return response;
+            }
         }
         return ServerResponse.createByErrorMessage("验证码错误！");
     }
@@ -139,34 +148,59 @@ public class UserController {
      * 跳转加载信息
      *
      * @param httpServletRequest
-     * @param httpServletResponse
      * @return
      */
-    @RequestMapping(value = "/onLoad.do",method = RequestMethod.POST)
+    @RequestMapping(value = "/onLoad.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<User> onLoad(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+    public ServerResponse<User> onLoad(HttpServletRequest httpServletRequest) {
+        String loginToken = httpServletRequest.getHeader("loginToken");
         String jsonStr = RedisPoolUtil.get(loginToken);
-        User user = JsonUtil.string2Obj(jsonStr,User.class);
+        if (StringUtils.isEmpty(jsonStr)) {
+            return ServerResponse.createByErrorNotLogin();
+        }
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         ServerResponse<User> response = userService.onLoadUser(user.getUserId());
         return response;
     }
 
-
-        /**
-         * 退出登陆
-         *
-         * @param httpServletRequest
-         * @param httpServletResponse
-         * @return
-         */
-        @RequestMapping(value = "/logout.do", method = RequestMethod.POST)
-        @ResponseBody
-        public ServerResponse<String> logout (HttpServletRequest httpServletRequest, HttpServletResponse
-        httpServletResponse){
-            String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-            CookieUtil.delLoginToken(httpServletRequest, httpServletResponse);
-            RedisPoolUtil.del(loginToken);
-            return ServerResponse.createBySuccessMessage("退出登陆成功");
+    /**
+     * 更新密码
+     *
+     * @param httpServletRequest
+     * @return
+     */
+    @RequestMapping(value = "/updatePassword.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<User> updatePassword(@RequestBody User user,HttpServletRequest httpServletRequest) {
+        String loginToken = httpServletRequest.getHeader("loginToken");
+        String jsonStr = RedisPoolUtil.get(loginToken);
+        if (StringUtils.isEmpty(jsonStr)) {
+            return ServerResponse.createByErrorNotLogin();
         }
+        if(StringUtils.isEmpty(user.getPassword())) {
+            return ServerResponse.createByErrorCodeMessage(4,"传入的值为空，无法进行修改");
+        }
+        User user1 = JsonUtil.string2Obj(jsonStr,User.class);
+        user.setUserId(user1.getUserId());
+        ServerResponse<User> response = userService.updatePassword(user);
+        return response;
     }
+
+
+    /**
+     * 退出登陆
+     *
+     * @param httpServletRequest
+     * @return
+     */
+    @RequestMapping(value = "/logout.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<String> logout(HttpServletRequest httpServletRequest) {
+        String loginToken = httpServletRequest.getHeader("loginToken");
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServerResponse.createByErrorNotLogin();
+        }
+        RedisPoolUtil.del(loginToken);
+        return ServerResponse.createBySuccessMessage("退出登陆成功");
+    }
+}

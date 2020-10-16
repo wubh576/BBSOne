@@ -3,12 +3,40 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bluemsun.BBS.dao.PlateDao">
+    <resultMap id="plateMap" type="com.bluemsun.BBS.entity.Plate">
+        <constructor>
+            <idArg column="plate_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="plate_name" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="plate_img" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="plate_desc" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="last_edit_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="plate_topping" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="plate_hot" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="plate_status" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="plate_status_info" jdbcType="VARCHAR" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
 
     <insert id="insertPlate" parameterType="com.bluemsun.BBS.entity.Plate">
         INSERT INTO
-        tb_plate(`plate_name`,`create_time`,`plate_img`)
+        tb_plate(`plate_name`,`plate_img`,`plate_desc`,`create_time`,`last_edit_time`)
 		VALUES
-		(#{plateName},#{craeteTime},#{plateImg})
+		(#{plateName},#{plateImg},#{plateDesc},#{createTime},#{lastEditTime})
     </insert>
+
+    <select id="checkPlateName" resultType="int" parameterType="string">
+        SELECT count(1)
+        FROM tb_plate
+        WHERE `plate_name` = #{plateName}
+    </select>
+
+    <select id="selectList" resultType="com.bluemsun.BBS.dto.PlateIdAndName">
+        SELECT `plate_id`,`plate_name`
+        FROM tb_plate
+        <if test="plateName!=null">
+            WHERE `plate_name` LIKE #{plateName}
+        </if>
+    </select>
 
 </mapper>

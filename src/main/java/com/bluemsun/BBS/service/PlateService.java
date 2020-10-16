@@ -11,6 +11,15 @@ public interface PlateService {
      * @param plate
      * @return
      */
-    ServerResponse<Plate> insertPlate(Plate plate);
+    ServerResponse<String> insertPlate(Plate plate);
+
+    /**
+     * 查看板块名是否存在
+     *
+     * @param plateName
+     * @return
+     */
+    ServerResponse<String> checkPlateName(String plateName);
+
 
 }

@@ -15,6 +15,7 @@ public class RedisPool {
 
     private static String redisIp = PropertiesUtil.getProperty("redis.ip");
     private static Integer redisPort = Integer.parseInt(PropertiesUtil.getProperty("redis.port"));
+    private static String redisPassword = PropertiesUtil.getProperty("redis.password");
 
     private static void initPool() {
         JedisPoolConfig config = new JedisPoolConfig();
@@ -26,6 +27,10 @@ public class RedisPool {
         config.setTestOnReturn(testOnReturn);
         config.setBlockWhenExhausted(true);//连接耗尽的时候，是否阻塞，false会抛出异常，true阻塞直到超时。默认为true。
 
+        // TODO: 2020/10/14 阿里云
+//        pool = new redis.clients.jedis.JedisPool(config, redisIp, redisPort, 1000 * 2,redisPassword);
+
+//        // TODO: 2020/10/14 线下
         pool = new redis.clients.jedis.JedisPool(config, redisIp, redisPort, 1000 * 2);
     }
 
@@ -48,7 +53,7 @@ public class RedisPool {
     }
 
 
-    //测试成功 2020.10.03
+    //测试
 //    public static void main(String[] args) {
 //        Jedis jedis = pool.getResource();
 //        System.out.println("program is start");

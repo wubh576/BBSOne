@@ -21,6 +21,7 @@ public class MailUtil {
         MailSSLSocketFactory mailSSLSocketFactory = new MailSSLSocketFactory();
         mailSSLSocketFactory.setTrustAllHosts(true);
         properties.put("mail.stmp.ssl.socketFactory", mailSSLSocketFactory);
+        properties.put("mail.smtp.ssl.enable", "true");
         final String username = properties.getProperty("QQmail.username");
         final String password = properties.getProperty("QQmail.password");
         String host = properties.getProperty("QQmail.host");
@@ -49,7 +50,7 @@ public class MailUtil {
         //邮件的标题
         mimeMessage.setSubject("尊敬的用户您好！欢迎加入蓝旭BBS");
         //邮件的内容
-        mimeMessage.setContent("您的验证码为:"+verificationCode, "text/html;charset=UTF-8");
+        mimeMessage.setContent("您的验证码为:"+verificationCode+"<h1>有效期为10分钟，请尽快完成邮箱绑定<h1/>"+"<h1>如有任何问题，请联系客服：18037029697<h1/>", "text/html;charset=UTF-8");
         //5.发送邮件
         transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
         transport.close();

@@ -32,14 +32,6 @@ public interface UserDao {
      */
     int insertUser(User user);
 
-    /**
-     * 通过userId绑定用户邮箱
-     *
-     * @param userId
-     * @param email
-     * @return
-     */
-    int updateEmailByUserId(@Param("userId") int userId, @Param("email") String email);
 
     /**
      * 通过userId查询用户信息
@@ -49,7 +41,6 @@ public interface UserDao {
      */
     User selectByUserId(int userId);
 
-    int updateUserImgByUserId(User user);
 
     /**
      * 通过主键更新用户信息（动态SQL）
@@ -58,5 +49,14 @@ public interface UserDao {
      * @return
      */
     int updateByPrimaryKeySelective(User user);
+
+    /**
+     * 查询邮箱是否存在
+     *
+     * @param email
+     * @return
+     */
+    int checkEmail(String email);
+
 
 }

@@ -81,4 +81,12 @@ public class ServerResponse<T> implements Serializable {
     public static <T> ServerResponse<T> createByErrorCodeMessage(int errorCode, String errorMessage) {
         return new ServerResponse<T>(errorCode, errorMessage);
     }
+
+    public static <T> ServerResponse<T> createByErrorNotLogin() {
+        return new ServerResponse<T>(ResponseEnum.NEED_LOGIN.getCode(),"用户未登录,无法获取当前用户的信息");
+    }
+
+    public static <T> ServerResponse<T> createByErrorNoAuthority() {
+        return new ServerResponse<T>(ResponseEnum.NO_AUTHORITY.getCode(),"权限不足，无法该进行操作");
+    }
 }

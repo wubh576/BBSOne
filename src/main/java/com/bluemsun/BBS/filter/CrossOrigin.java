@@ -20,6 +20,7 @@ public class CrossOrigin implements Filter {
         //允许跨域的域名，*号为允许所有,存在被 DDoS攻击的可能。
         response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
 
+
         //表明服务器支持的所有头信息字段
         response.setHeader("Access-Control-Allow-Headers",
                 "Origin," +
@@ -39,7 +40,8 @@ public class CrossOrigin implements Filter {
                         "Cookie," +
                         "X-XSRF-TOKEN," +
                         "X-CSRF-TOKEN," +
-                        "Authorization");
+                        "Authorization"
+        );
 
         //如果需要把Cookie发到服务端，需要指定Access-Control-Allow-Credentials字段为true;
         response.setHeader("Access-Control-Allow-Credentials", "true");
@@ -54,6 +56,10 @@ public class CrossOrigin implements Filter {
 
         // IE8 引入XDomainRequest跨站数据获取功能,也就是说为了兼容IE
         response.setHeader("XDomainRequestAllowed", "1");
+
+        //暴露Token
+        response.setHeader("Access-Control-Expose-Headers","loginToken");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type,XFILENAME,XFILECATEGORY,XFILESIZE");
 
         //filter chain
         filterChain.doFilter(servletRequest, servletResponse);
