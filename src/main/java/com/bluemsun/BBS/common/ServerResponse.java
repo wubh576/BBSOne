@@ -68,7 +68,6 @@ public class ServerResponse<T> implements Serializable {
         return new ServerResponse<T>(ResponseEnum.SUCCESS.getCode(), msg, data);
     }
 
-
     public static <T> ServerResponse<T> createByError() {
         return new ServerResponse<T>(ResponseEnum.ERROR.getCode(), ResponseEnum.ERROR.getDesc());
     }
@@ -83,10 +82,10 @@ public class ServerResponse<T> implements Serializable {
     }
 
     public static <T> ServerResponse<T> createByErrorNotLogin() {
-        return new ServerResponse<T>(ResponseEnum.NEED_LOGIN.getCode(),"用户未登录,无法获取当前用户的信息");
+        return new ServerResponse<T>(ResponseEnum.NEED_LOGIN.getCode(), "用户未登录,无法获取当前用户的信息");
     }
 
     public static <T> ServerResponse<T> createByErrorNoAuthority() {
-        return new ServerResponse<T>(ResponseEnum.NO_AUTHORITY.getCode(),"权限不足，无法该进行操作");
+        return new ServerResponse<T>(ResponseEnum.NO_AUTHORITY.getCode(), "权限不足，无法该进行操作");
     }
 }

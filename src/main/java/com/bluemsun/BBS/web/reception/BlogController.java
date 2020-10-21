@@ -6,7 +6,6 @@ import com.bluemsun.BBS.entity.Blog;
 import com.bluemsun.BBS.entity.Plate;
 import com.bluemsun.BBS.entity.User;
 import com.bluemsun.BBS.service.BlogService;
-import com.bluemsun.BBS.util.CookieUtil;
 import com.bluemsun.BBS.util.JsonUtil;
 import com.bluemsun.BBS.util.RedisPoolUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +31,8 @@ public class BlogController {
      */
     @RequestMapping(value = "/refresh.do", method = RequestMethod.POST)
     @ResponseBody
-    public void refreshLogin() {
+    public void refreshLogin(HttpServletRequest httpServletRequest) {
+        // TODO: 2020/10/16 没写完没写完没写完
     }
 
     /**
@@ -45,7 +45,7 @@ public class BlogController {
     @RequestMapping(value = "/insert.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<Blog> insert(@RequestBody Blog blog, HttpServletRequest httpServletRequest) {
-        String loginToken = httpServletRequest.getHeader("loginToken");
+        String loginToken = httpServletRequest.getHeader("token");
         String jsonStr = RedisPoolUtil.get(loginToken);
         if (StringUtils.isEmpty(jsonStr)) {
             return ServerResponse.createByErrorNotLogin();
@@ -78,7 +78,7 @@ public class BlogController {
     @RequestMapping(value = "/selectPlate.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<List<PlateIdAndName>> selectPlate(HttpServletRequest httpServletRequest) {
-        String loginToken = httpServletRequest.getHeader("loginToken");
+        String loginToken = httpServletRequest.getHeader("token");
         String jsonStr = RedisPoolUtil.get(loginToken);
         if (StringUtils.isEmpty(jsonStr)) {
             return ServerResponse.createByErrorNotLogin();
@@ -98,7 +98,7 @@ public class BlogController {
     @RequestMapping(value = "/searchPlateForBlog.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<List<PlateIdAndName>> searchPlateForBlog(@RequestBody Plate plate, HttpServletRequest httpServletRequest) {
-        String loginToken = httpServletRequest.getHeader("loginToken");
+        String loginToken = httpServletRequest.getHeader("token");
         String jsonStr = RedisPoolUtil.get(loginToken);
         if (StringUtils.isEmpty(jsonStr)) {
             return ServerResponse.createByErrorNotLogin();

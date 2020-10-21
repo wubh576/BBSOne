@@ -41,12 +41,11 @@ public class UserController {
     @ResponseBody
     public ServerResponse<User> login(@RequestBody User user, HttpServletResponse httpServletResponse) {
         System.out.println(user);
-        String username = user.getUsername();
         ServerResponse<User> response = userService.login(user);
         if (response.isSuccess()) {
             String loginToken = TokenUtil.setToken();
             RedisPoolUtil.setEx(loginToken, JsonUtil.obj2String(response.getData()), Const.RedisCacheExtime.REDIES_SESSION_EXTIME);
-            httpServletResponse.addHeader("loginToken", loginToken);
+            httpServletResponse.addHeader("token", loginToken);
         }
         return response;
     }
@@ -90,7 +89,7 @@ public class UserController {
     @RequestMapping(value = "/bindMail.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> bindMail(@RequestBody User user, HttpServletRequest httpServletRequest) throws GeneralSecurityException, IOException, MessagingException {
-        String loginToken = httpServletRequest.getHeader("loginToken");
+        String loginToken = httpServletRequest.getHeader("token");
         String jsonStr = RedisPoolUtil.get(loginToken);
         if (StringUtils.isEmpty(jsonStr)) {
             return ServerResponse.createByErrorNotLogin();
@@ -116,7 +115,7 @@ public class UserController {
     @RequestMapping(value = "/checkVerificationCode.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<User> checkVerificationCode(@RequestBody ResponseData responseData, HttpServletRequest httpServletRequest) {
-        String loginToken = httpServletRequest.getHeader("loginToken");
+        String loginToken = httpServletRequest.getHeader("token");
         String jsonStr = RedisPoolUtil.get(loginToken);
         if (StringUtils.isEmpty(jsonStr)) {
             return ServerResponse.createByErrorNotLogin();
@@ -153,7 +152,7 @@ public class UserController {
     @RequestMapping(value = "/onLoad.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<User> onLoad(HttpServletRequest httpServletRequest) {
-        String loginToken = httpServletRequest.getHeader("loginToken");
+        String loginToken = httpServletRequest.getHeader("token");
         String jsonStr = RedisPoolUtil.get(loginToken);
         if (StringUtils.isEmpty(jsonStr)) {
             return ServerResponse.createByErrorNotLogin();
@@ -172,7 +171,7 @@ public class UserController {
     @RequestMapping(value = "/updatePassword.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<User> updatePassword(@RequestBody User user,HttpServletRequest httpServletRequest) {
-        String loginToken = httpServletRequest.getHeader("loginToken");
+        String loginToken = httpServletRequest.getHeader("token");
         String jsonStr = RedisPoolUtil.get(loginToken);
         if (StringUtils.isEmpty(jsonStr)) {
             return ServerResponse.createByErrorNotLogin();
@@ -196,7 +195,7 @@ public class UserController {
     @RequestMapping(value = "/logout.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> logout(HttpServletRequest httpServletRequest) {
-        String loginToken = httpServletRequest.getHeader("loginToken");
+        String loginToken = httpServletRequest.getHeader("token");
         if (StringUtils.isEmpty(loginToken)) {
             return ServerResponse.createByErrorNotLogin();
         }

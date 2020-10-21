@@ -29,7 +29,10 @@ public class PlateServiceImpl implements PlateService {
         }
         plate.setCreateTime(new Date());
         plate.setLastEditTime(new Date());
-        plate.setPlateImg("http://bluesun.natapp1.cc/uploads/test.jpg");
+        // TODO: 2020/10/16 阿里云
+//        plate.setPlateImg("http://bluemsum.tech:8080/uploads/test.jpg");
+        // TODO: 2020/10/16 线下
+        plate.setPlateImg("http://bluesun.natapp1.cc/uploads/plateDemo.jpg");
         int result = plateDao.insertPlate(plate);
         if (result == 1) {
             return ServerResponse.createBySuccess("新建板块成功");

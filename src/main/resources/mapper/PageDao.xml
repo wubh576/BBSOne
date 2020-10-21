@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bluemsun.BBS.dao.PageDao">
+
+    <select id="pageIndexBlog" resultType="com.bluemsun.BBS.dto.BlogPage">
+        SELECT b.blog_title,b.blog_hot,p.plate_name,u.username
+        FROM tb_blog b
+        JOIN tb_plate p ON b.blog_plate_id=p.plate_id
+        JOIN tb_user u ON b.blog_author_id=u.user_id
+        <if test="userId != 0">
+            WHERE b.blog_author_id=#{userId}
+        </if>
+        LIMIT #{startIndex},#{pageSize}
+    </select>
+
+    <select id="pageIndexBlogCount" resultType="int">
+        SELECT count(1)
+        FROM tb_blog b
+        JOIN tb_plate p ON b.blog_plate_id=p.plate_id
+        JOIN tb_user u ON b.blog_author_id=u.user_id
+        <if test="userId != 0">
+            WHERE b.blog_author_id=#{userId}
+        </if>
+    </select>
+
+
+</mapper>

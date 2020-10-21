@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bluemsun.BBS.dao.CommentDao">
+    <insert id="insertFirstComment" parameterType="com.bluemsun.BBS.entity.FirstComment">
+        INSERT INTO
+		tb_first_comment(`first_user_id`,`first_content`,`first_create_time`,`first_blog_id`)
+		VALUES
+		(#{firstUserId},#{firstContent},#{firstCreateTime},#{firstBlogId})
+    </insert>
+
+    <insert id="insertSecondComment" parameterType="com.bluemsun.BBS.entity.SecondComment">
+        INSERT INTO
+		tb_second_comment(`second_user_id`,`second_content`,`second_create_time`,`second_first_id`)
+		VALUES
+		(#{secondUserId},#{secondContent},#{secondCreateTime},#{secondFirstId})
+    </insert>
+
+</mapper>

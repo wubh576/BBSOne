@@ -20,5 +20,4 @@
 		VALUES
 		(#{blogId},#{url})
     </insert>
-
 </mapper>

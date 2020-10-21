@@ -53,11 +53,11 @@ public class RedisPool {
     }
 
 
-    //测试
+//    //测试
 //    public static void main(String[] args) {
 //        Jedis jedis = pool.getResource();
 //        System.out.println("program is start");
-//        jedis.set("testKEY", "testVALUE");
+//        jedis.set("testKEY222", "testVALUE");
 //        returnResource(jedis);
 //        pool.destroy();//临时调用，销毁连接池中的所有连接
 //        System.out.println("program is end");

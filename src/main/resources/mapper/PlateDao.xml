@@ -37,6 +37,7 @@
         <if test="plateName!=null">
             WHERE `plate_name` LIKE #{plateName}
         </if>
+        LIMIT 0,10
     </select>
 
 </mapper>

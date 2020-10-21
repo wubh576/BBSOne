@@ -28,4 +28,5 @@ public interface BlogDao {
      */
     int insertBlogFile(BlogFile blogFile);
 
+
 }

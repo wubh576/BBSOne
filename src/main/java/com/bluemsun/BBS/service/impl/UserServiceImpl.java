@@ -69,7 +69,10 @@ public class UserServiceImpl implements UserService {
         }
         user.setCreateTime(new Date());
         user.setLastEditTime(new Date());
-        user.setProfileImg("http://bluemsum.tech:8080/uploads/test.jpg");
+        // TODO: 2020/10/16 阿里云
+//        user.setProfileImg("http://bluemsum.tech:8080/uploads/test.jpg");
+        // TODO: 2020/10/16 线下
+        user.setProfileImg("http://bluesun.natapp1.cc/uploads/test.png");
         int result = userDao.insertUser(user);
         if (result == 1) {
             User user1 = userDao.selectLogin(user.getUsername(), user.getPassword());

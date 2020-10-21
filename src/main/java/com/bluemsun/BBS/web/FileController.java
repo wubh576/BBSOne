@@ -36,7 +36,7 @@ public class FileController {
     @RequestMapping(value = "/blogUpload.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> blogFileUpload(HttpServletRequest httpServletRequest, MultipartFile mfile) throws IOException {
-        String loginToken = httpServletRequest.getHeader("loginToken");
+        String loginToken = httpServletRequest.getHeader("token");
         String jsonStr = RedisPoolUtil.get(loginToken);
         if(StringUtils.isEmpty(jsonStr)) {
             return ServerResponse.createByErrorNotLogin();
@@ -83,7 +83,7 @@ public class FileController {
     @RequestMapping(value = "/userUpload.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<User> userFileUpload(HttpServletRequest httpServletRequest, MultipartFile mfile) throws IOException {
-        String loginToken = httpServletRequest.getHeader("loginToken");
+        String loginToken = httpServletRequest.getHeader("token");
         String jsonStr = RedisPoolUtil.get(loginToken);
         if(StringUtils.isEmpty(jsonStr)) {
             return ServerResponse.createByErrorNotLogin();

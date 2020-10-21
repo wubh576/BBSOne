@@ -24,7 +24,7 @@ public class SessionExpireFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest)servletRequest;
-        String loginToken = httpServletRequest.getHeader("loginToken");
+        String loginToken = httpServletRequest.getHeader("token");
         if(StringUtils.isNotEmpty(loginToken)){
             //判断logintoken是否为空或者""；
             //如果不为空的话，符合条件，继续拿user信息
