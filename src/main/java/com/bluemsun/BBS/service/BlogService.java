@@ -1,6 +1,8 @@
 package com.bluemsun.BBS.service;
 
 import com.bluemsun.BBS.common.ServerResponse;
+import com.bluemsun.BBS.dto.BlogAndUser;
+import com.bluemsun.BBS.dto.BlogPage;
 import com.bluemsun.BBS.dto.PlateIdAndName;
 import com.bluemsun.BBS.entity.Blog;
 import com.bluemsun.BBS.entity.BlogFile;
@@ -23,15 +25,15 @@ public interface BlogService {
      * @param blogId
      * @return
      */
-    ServerResponse<Blog> viewBlogByBlogId(int blogId);
+    ServerResponse<BlogAndUser> viewBlogByBlogId(int blogId);
 
-    /**
-     * 插入Blog图片
-     *
-     * @param blogFile
-     * @return
-     */
-    ServerResponse<String> insertBlogFile(BlogFile blogFile);
+//    /**
+//     * 插入Blog图片
+//     *
+//     * @param blogFile
+//     * @return
+//     */
+//    ServerResponse<String> insertBlogFile(BlogFile blogFile);
 
     /**
      * 选择博客对应板块

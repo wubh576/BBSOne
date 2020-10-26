@@ -1,6 +1,7 @@
 package com.bluemsun.BBS.service;
 
 import com.bluemsun.BBS.common.ServerResponse;
+import com.bluemsun.BBS.dto.PageDto;
 import com.bluemsun.BBS.entity.Plate;
 
 public interface PlateService {
@@ -20,6 +21,23 @@ public interface PlateService {
      * @return
      */
     ServerResponse<String> checkPlateName(String plateName);
+
+    /**
+     * 首页热门板块展示
+     *
+     * @return
+     */
+    ServerResponse<PageDto> indexHotPlate();
+
+    /**
+     * 板块分页
+     *
+     * @return
+     * @param pageNo
+     * @param pageSize
+     */
+    ServerResponse<PageDto> pagePlate(int pageNo, int pageSize);
+
 
 
 }

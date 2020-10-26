@@ -1,6 +1,7 @@
 package com.bluemsun.BBS.web.reception;
 
 import com.bluemsun.BBS.common.ServerResponse;
+import com.bluemsun.BBS.dto.BlogAndUser;
 import com.bluemsun.BBS.dto.PlateIdAndName;
 import com.bluemsun.BBS.entity.Blog;
 import com.bluemsun.BBS.entity.Plate;
@@ -32,7 +33,6 @@ public class BlogController {
     @RequestMapping(value = "/refresh.do", method = RequestMethod.POST)
     @ResponseBody
     public void refreshLogin(HttpServletRequest httpServletRequest) {
-        // TODO: 2020/10/16 没写完没写完没写完
     }
 
     /**
@@ -62,10 +62,10 @@ public class BlogController {
      * @param blog
      * @return
      */
-    @RequestMapping(value = "/viewBlogByBlogId.do", method = RequestMethod.POST)
+    @RequestMapping(value = "/viewBlogByBlogId", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<Blog> viewBlogByBlogId(@RequestBody Blog blog) {
-        ServerResponse<Blog> response = blogService.viewBlogByBlogId(blog.getBlogId());
+    public ServerResponse<BlogAndUser> viewBlogByBlogId(@RequestBody Blog blog) {
+        ServerResponse<BlogAndUser> response = blogService.viewBlogByBlogId(blog.getBlogId());
         return response;
     }
 

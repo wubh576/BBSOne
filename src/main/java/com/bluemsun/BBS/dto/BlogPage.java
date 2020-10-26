@@ -2,10 +2,19 @@ package com.bluemsun.BBS.dto;
 
 public class BlogPage {
 
+    private Integer blogId;
     private String blogTitle;
     private String plateName;
     private String username;
     private Integer blogHot;
+
+    public Integer getBlogId() {
+        return blogId;
+    }
+
+    public void setBlogId(Integer blogId) {
+        this.blogId = blogId;
+    }
 
     public String getBlogTitle() {
         return blogTitle;
@@ -41,8 +50,9 @@ public class BlogPage {
 
     @Override
     public String toString() {
-        return "IndexBlogPage{" +
-                "blogTitle='" + blogTitle + '\'' +
+        return "BlogPage{" +
+                "blogId=" + blogId +
+                ", blogTitle='" + blogTitle + '\'' +
                 ", plateName='" + plateName + '\'' +
                 ", username='" + username + '\'' +
                 ", blogHot=" + blogHot +

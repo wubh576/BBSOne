@@ -16,5 +16,59 @@
 		VALUES
 		(#{secondUserId},#{secondContent},#{secondCreateTime},#{secondFirstId})
     </insert>
+    
+    <select id="pageFirstCommentByLike" resultType="com.bluemsun.BBS.dto.PageCommentAndUser">
+        SELECT f.first_comment_id,f.first_user_id,f.first_content,f.first_create_time,f.first_comment_like,u.username,u.profile_img,u.user_rank
+        FROM tb_first_comment f
+        JOIN tb_user u ON f.first_user_id=u.user_id
+        WHERE `first_blog_id` = #{firstBlogId}
+        ORDER BY `first_comment_like` DESC
+        LIMIT #{startIndex},#{pageSize}
+    </select>
 
+    <select id="pageFirstCommentByTime" resultType="com.bluemsun.BBS.dto.PageCommentAndUser">
+        SELECT f.first_comment_id,f.first_user_id,f.first_content,f.first_create_time,f.first_comment_like,u.username,u.profile_img,u.user_rank
+        FROM tb_first_comment f
+        JOIN tb_user u ON f.first_user_id=u.user_id
+        WHERE `first_blog_id` = #{firstBlogId}
+        ORDER BY `first_create_time` DESC
+        LIMIT #{startIndex},#{pageSize}
+    </select>
+
+    <select id="pageCountFirstComment" resultType="int">
+        SELECT count(1)
+        FROM tb_first_comment
+        WHERE `first_blog_id` = #{firstBlogId}
+    </select>
+
+    <select id="secondCommentForBlog" resultType="int">
+        SELECT `first_blog_id`
+        FROM tb_first_comment
+        WHERE first_comment_id = #{secondFirstId}
+    </select>
+
+
+    <select id="pageSecondCommentByCreateTimeForThree" resultType="com.bluemsun.BBS.dto.SecondCommentAndUser">
+        SELECT s.second_comment_id,s.second_user_id,s.second_content,s.second_create_time,s.second_comment_like,u.username,u.profile_img,u.user_rank
+        FROM tb_second_comment s
+        JOIN tb_user u ON s.second_user_id=u.user_id
+        WHERE `second_first_id` = #{secondFirstId}
+        ORDER BY `second_create_time` DESC
+        LIMIT 0,3
+    </select>
+
+    <select id="pageSecondCommentCount" resultType="int">
+        SELECT count(1)
+        FROM tb_second_comment
+        WHERE `second_first_id` = #{secondFirstId}
+    </select>
+
+    <select id="pageSecondCommentByCreateTime" resultType="com.bluemsun.BBS.dto.SecondCommentAndUser">
+        SELECT s.second_comment_id,s.second_user_id,s.second_content,s.second_create_time,s.second_comment_like,u.username,u.profile_img,u.user_rank
+        FROM tb_second_comment s
+        JOIN tb_user u ON s.second_user_id=u.user_id
+        WHERE `second_first_id` = #{secondFirstId}
+        ORDER BY `second_create_time` DESC
+        LIMIT #{startIndex},#{pageSize}
+    </select>
 </mapper>

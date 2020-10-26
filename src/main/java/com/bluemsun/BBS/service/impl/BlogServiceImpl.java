@@ -3,6 +3,7 @@ package com.bluemsun.BBS.service.impl;
 import com.bluemsun.BBS.common.ServerResponse;
 import com.bluemsun.BBS.dao.BlogDao;
 import com.bluemsun.BBS.dao.PlateDao;
+import com.bluemsun.BBS.dto.BlogAndUser;
 import com.bluemsun.BBS.dto.PlateIdAndName;
 import com.bluemsun.BBS.entity.Blog;
 import com.bluemsun.BBS.entity.BlogFile;
@@ -49,35 +50,34 @@ public class BlogServiceImpl implements BlogService {
      * @return
      */
     @Override
-    public ServerResponse<Blog> viewBlogByBlogId(int blogId) {
+    public ServerResponse<BlogAndUser> viewBlogByBlogId(int blogId) {
         if (blogId == 0) {
             return ServerResponse.createByErrorMessage("blogId为0，错误传入");
         }
-        Blog blog = null;
-        blog = blogDao.viewBlogByBlogId(blogId);
-        if (blog == null) {
+        BlogAndUser blogAndUser = blogDao.viewBlogByBlogId(blogId);
+        if (blogAndUser == null) {
             return ServerResponse.createByErrorCodeMessage(2, "该博客已被删除，查询失败");
         }
-        return ServerResponse.createBySuccess("查询成功", blog);
+        return ServerResponse.createBySuccess("查询成功", blogAndUser);
     }
 
-    /**
-     * 插入Blog图片
-     *
-     * @param blogFile
-     * @return
-     */
-    @Override
-    public ServerResponse<String> insertBlogFile(BlogFile blogFile) {
-        if (blogFile == null) {
-            return ServerResponse.createByErrorMessage("blogFile为空，错误传入");
-        }
-        int result = blogDao.insertBlogFile(blogFile);
-        if (result == 1) {
-            return ServerResponse.createBySuccess("保存blogFile成功", blogFile.getUri());
-        }
-        return ServerResponse.createByErrorCodeMessage(2, "其他错误，保存blogFile失败");
-    }
+//    /**
+//     * 插入Blog图片
+//     *
+//     * @param blogFile
+//     * @return
+//     */
+//    @Override
+//    public ServerResponse<String> insertBlogFile(BlogFile blogFile) {
+//        if (blogFile == null) {
+//            return ServerResponse.createByErrorMessage("blogFile为空，错误传入");
+//        }
+//        int result = blogDao.insertBlogFile(blogFile);
+//        if (result == 1) {
+//            return ServerResponse.createBySuccess("保存blogFile成功", blogFile.getUri());
+//        }
+//        return ServerResponse.createByErrorCodeMessage(2, "其他错误，保存blogFile失败");
+//    }
 
     /**
      * 博客选择板块

@@ -25,6 +25,7 @@ public class PageController {
 
     /**
      * 首页博客分页展示
+     *
      * @param httpServletRequest
      * @return
      */
@@ -39,6 +40,7 @@ public class PageController {
 
     /**
      * 个人博客分页展示
+     *
      * @param httpServletRequest
      * @return
      */
@@ -53,21 +55,22 @@ public class PageController {
         User user = JsonUtil.string2Obj(jsonStr, User.class);
         int pageNo = Integer.decode(httpServletRequest.getParameter("pageNo"));
         int pageSize = Integer.decode(httpServletRequest.getParameter("pageSize"));
-        ServerResponse<PageDto> response = pageService.pageBlogByUserId(user.getUserId(),pageNo,pageSize);
+        ServerResponse<PageDto> response = pageService.pageBlogByUserId(user.getUserId(), pageNo, pageSize);
         return response;
     }
 
     /**
      * 博客选择板块时的分页
+     *
      * @param httpServletRequest
      * @return
      */
-    @RequestMapping(value = "/pagePlateWhenBlog.do" , method = RequestMethod.POST)
+    @RequestMapping(value = "/pagePlateWhenBlog.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<PageDto> pagePlateWhenBlog(HttpServletRequest httpServletRequest) {
         String loginToken = httpServletRequest.getHeader("token");
         String jsonStr = RedisPoolUtil.get(loginToken);
-        if(StringUtils.isEmpty(jsonStr)) {
+        if (StringUtils.isEmpty(jsonStr)) {
             return ServerResponse.createByErrorNotLogin();
         }
         int pageNo = Integer.decode(httpServletRequest.getParameter("pageNo"));
@@ -75,8 +78,4 @@ public class PageController {
         // TODO: 2020/10/20
         return null;
     }
-
-
-
-
 }

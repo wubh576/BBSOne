@@ -9,9 +9,17 @@
 		VALUES
 		(#{blogTitle},#{blogPlateId},#{blogAuthorId},#{createTime},#{lastEditTime},#{blogContent})
     </insert>
-    <select id="viewBlogByBlogId" resultType="com.bluemsun.BBS.entity.Blog">
-        SELECT `blog_id`,`blog_title`,`blog_author_id`,`create_time`,`blog_content`
-		FROM tb_blog
+
+    <select id="blogInfoByBlogId" resultType="com.bluemsun.BBS.entity.Blog">
+        SELECT b.blog_id,b.blog_title,b.blog_author_id,b.create_time,b.blog_content,b.blog_plate_id,b.blog_topping,b.blog_like,b.blog_comment,b.blog_hot,b.blog_status,b.blog_status_info,b.last_edit_time
+		FROM tb_blog b
+		WHERE blog_id = #{blogId}
+    </select>
+
+    <select id="viewBlogByBlogId" resultType="com.bluemsun.BBS.dto.BlogAndUser">
+        SELECT b.blog_id,b.blog_title,b.blog_author_id,b.create_time,b.blog_content,u.username,u.profile_img,u.user_rank
+		FROM tb_blog b
+		JOIN tb_user u ON b.blog_author_id=u.user_id
 		WHERE blog_id = #{blogId}
     </select>
     <insert id="insertBlogFile" parameterType="com.bluemsun.BBS.entity.BlogFile">
@@ -20,4 +28,10 @@
 		VALUES
 		(#{blogId},#{url})
     </insert>
+
+    <update id="increaseBlogComment">
+        UPDATE tb_blog
+        SET blog_comment = #{blogComment}
+        WHERE blog_id = #{blogId}
+    </update>
 </mapper>

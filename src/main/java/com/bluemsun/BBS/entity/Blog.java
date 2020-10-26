@@ -28,6 +28,9 @@ public class Blog {
     private Integer blogStatus;
     //博客状态描述
     private String blogStatusInfo;
+    //博客评论数
+    private Integer blogComment;
+
 
     public Integer getBlogId() {
         return blogId;
@@ -125,6 +128,14 @@ public class Blog {
         this.blogStatusInfo = blogStatusInfo;
     }
 
+    public Integer getBlogComment() {
+        return blogComment;
+    }
+
+    public void setBlogComment(Integer blogComment) {
+        this.blogComment = blogComment;
+    }
+
     @Override
     public String toString() {
         return "Blog{" +
@@ -140,6 +151,7 @@ public class Blog {
                 ", blogLike=" + blogLike +
                 ", blogStatus=" + blogStatus +
                 ", blogStatusInfo='" + blogStatusInfo + '\'' +
+                ", blogComment=" + blogComment +
                 '}';
     }
 }

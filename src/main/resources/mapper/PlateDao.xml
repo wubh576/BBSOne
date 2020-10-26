@@ -40,4 +40,30 @@
         LIMIT 0,10
     </select>
 
+    <select id="indexHotPlate" resultType="com.bluemsun.BBS.entity.Plate">
+        SELECT `plate_id`,`plate_name`,`plate_img`,`plate_hot`
+        FROM tb_plate
+        ORDER BY `plate_hot` DESC
+        LIMIT 0,10
+    </select>
+
+    <select id="pagePlateByCreateTime" resultType="com.bluemsun.BBS.entity.Plate">
+        SELECT `plate_id`,`plate_name`,`plate_img`,`plate_desc`,`create_time`,`last_edit_time`,`plate_topping`,`plate_hot`,`plate_status`,`plate_status_info`
+        FROM tb_plate
+        ORDER BY `create_time` DESC
+        LIMIT #{startIndex},#{pageSize}
+    </select>
+
+    <select id="pagePlateByHot" resultType="com.bluemsun.BBS.entity.Plate">
+        SELECT `plate_id`,`plate_name`,`plate_img`,`plate_desc`,`create_time`,`last_edit_time`,`plate_topping`,`plate_hot`,`plate_status`,`plate_status_info`
+        FROM tb_plate
+        ORDER BY `plate_hot` DESC
+        LIMIT #{startIndex},#{pageSize}
+    </select>
+
+    <select id="pagePlateCount" resultType="int">
+        SELECT count(1)
+        FROM tb_plate
+    </select>
+
 </mapper>

@@ -2,7 +2,6 @@ package com.bluemsun.BBS.web.reception;
 
 import com.bluemsun.BBS.common.ServerResponse;
 import com.bluemsun.BBS.dto.PageDto;
-import com.bluemsun.BBS.entity.Blog;
 import com.bluemsun.BBS.entity.FirstComment;
 import com.bluemsun.BBS.entity.SecondComment;
 import com.bluemsun.BBS.entity.User;
@@ -60,7 +59,7 @@ public class CommentController {
         if (StringUtils.isEmpty(jsonStr)) {
             return ServerResponse.createByErrorNotLogin();
         }
-        User user = JsonUtil.string2Obj(jsonStr,User.class);
+        User user = JsonUtil.string2Obj(jsonStr, User.class);
         secondComment.setSecondUserId(user.getUserId());
         ServerResponse<SecondComment> response = commentService.insertSecondComment(secondComment);
         return response;
@@ -68,16 +67,45 @@ public class CommentController {
 
     /**
      * 一级评论分页
+     *
      * @param firstBlogId
      * @param pageNo
      * @param pageSize
-     * @param httpServletRequest
      * @return
      */
-    @RequestMapping(value = "/pageFirstComment.do" ,method = RequestMethod.GET)
+    @RequestMapping(value = "/pageFirstComment", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<PageDto> pageFirstComment(@RequestParam("firstBlogId") int firstBlogId,@RequestParam("pageNo") int pageNo,@RequestParam("pageSize") int pageSize, HttpServletRequest httpServletRequest) {
-        // TODO: 2020/10/21
-        return null;
+    public ServerResponse<PageDto> pageFirstComment(@RequestParam("firstBlogId") int firstBlogId, @RequestParam("pageNo") int pageNo, @RequestParam("pageSize") int pageSize) {
+        ServerResponse<PageDto> response = commentService.pageFirstComment(firstBlogId, pageNo, pageSize);
+        return response;
+    }
+
+    /**
+     * 二级评论分页
+     *
+     * @param firstCommendId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/pageSecondComment", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageDto> pageSecondComment(@RequestParam("firstCommentId") int firstCommendId, @RequestParam("pageNo") int pageNo, @RequestParam("pageSize") int pageSize) {
+        ServerResponse<PageDto> response = commentService.pageSecondComment(firstCommendId, pageNo, pageSize);
+        return response;
+    }
+
+    // TODO: 2020/10/24 收起，前端传一级评论id，后端反前三条
+    /**
+     * 收起二级评论
+     *
+     * @param firstCommendId
+     * @return
+     */
+    @RequestMapping(value = "/closePageSecondComment", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageDto> closePageSecondComment(@RequestParam("firstCommendId") int firstCommendId) {
+        ServerResponse<PageDto> response = commentService.closeSecondComment(firstCommendId);
+        return response;
     }
 }
