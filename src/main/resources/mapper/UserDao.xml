@@ -61,5 +61,64 @@
 		WHERE email = #{email}
 	</select>
 
+	<delete id="delUserByUserId" parameterType="int">
+		DELETE FROM tb_user
+		WHERE `user_id` = #{userId}
+	</delete>
 
+	<insert id="insertModerator" parameterType="int">
+		INSERT INTO
+		tb_plateAndUser(`user_id`,`plate_id`)
+		VALUES
+		(#{userId},#{plateId})
+	</insert>
+
+	<select id="countModerator" resultType="int">
+		SELECT count(1) FROM tb_plateAndUser
+		WHERE `plate_id` = #{plateId}
+	</select>
+
+	<select id="selectModerator" resultType="com.bluemsun.BBS.entity.PlateAndUser">
+		SELECT p.user_id,p.plate_id,u.username
+		FROM tb_plateAndUser p
+		JOIN tb_user u ON p.user_id = u.user_id
+		WHERE `plate_id` = #{plateId}
+	</select>
+
+	<select id="judgeModerator" resultType="int">
+		SELECT count(1)
+		FROM tb_plateAndUser
+		WHERE user_id = #{userId}
+		AND plate_id = #{plateId}
+	</select>
+
+	<delete id="delModerator" parameterType="int">
+		DELETE FROM tb_plateAndUser
+		WHERE user_id = #{userId}
+		AND plate_id = #{plateId}
+	</delete>
+
+	<select id="listUser" resultType="com.bluemsun.BBS.dto.PageUserForAdmin">
+		SELECT `user_id`,`username`,`password`,`email`,`phone`,`user_type`,`create_time`,`last_edit_time`,`profile_img`,`user_rank`
+		FROM tb_user
+		<if test="username != null">
+			WHERE `username` Like #{username}
+		</if>
+		LIMIT #{startIndex},#{pageSize}
+	</select>
+
+	<select id="countUser" resultType="int">
+		SELECT count(1)
+		FROM tb_user
+		<if test="username != null">
+			WHERE `username` Like #{username}
+		</if>
+	</select>
+
+	<select id="checkManagePlate" resultType="com.bluemsun.BBS.dto.PlateIdAndName">
+		SELECT p.plate_id,p.plate_name
+		FROM tb_plateAndUser u
+		JOIN tb_plate p ON p.plate_id = u.plate_id
+		WHERE u.user_id = #{userId}
+	</select>
 </mapper>

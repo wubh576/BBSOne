@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,9 +32,7 @@ public class PageController {
      */
     @RequestMapping(value = "/pageIndexBlog", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<PageDto> pageIndexBlog(HttpServletRequest httpServletRequest) {
-        int pageNo = Integer.decode(httpServletRequest.getParameter("pageNo"));
-        int pageSize = Integer.decode(httpServletRequest.getParameter("pageSize"));
+    public ServerResponse<PageDto> pageIndexBlog(@RequestParam("pageNo") int pageNo,@RequestParam("pageSize") int pageSize, HttpServletRequest httpServletRequest) {
         ServerResponse<PageDto> response = pageService.pageIndexBlog(pageNo, pageSize);
         return response;
     }
@@ -46,15 +45,13 @@ public class PageController {
      */
     @RequestMapping(value = "/pageBlogByUserId.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<PageDto> pageBlogByUserId(HttpServletRequest httpServletRequest) {
+    public ServerResponse<PageDto> pageBlogByUserId(@RequestParam("pageNo") int pageNo,@RequestParam("pageSize") int pageSize,HttpServletRequest httpServletRequest) {
         String loginToken = httpServletRequest.getHeader("token");
         String jsonStr = RedisPoolUtil.get(loginToken);
         if (StringUtils.isEmpty(jsonStr)) {
             return ServerResponse.createByErrorNotLogin();
         }
         User user = JsonUtil.string2Obj(jsonStr, User.class);
-        int pageNo = Integer.decode(httpServletRequest.getParameter("pageNo"));
-        int pageSize = Integer.decode(httpServletRequest.getParameter("pageSize"));
         ServerResponse<PageDto> response = pageService.pageBlogByUserId(user.getUserId(), pageNo, pageSize);
         return response;
     }
@@ -65,7 +62,7 @@ public class PageController {
      * @param httpServletRequest
      * @return
      */
-    @RequestMapping(value = "/pagePlateWhenBlog.do", method = RequestMethod.POST)
+    @RequestMapping(value = "/pagePlateWhenBlog.do", method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse<PageDto> pagePlateWhenBlog(HttpServletRequest httpServletRequest) {
         String loginToken = httpServletRequest.getHeader("token");

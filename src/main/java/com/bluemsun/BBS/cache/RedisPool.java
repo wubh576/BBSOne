@@ -28,10 +28,10 @@ public class RedisPool {
         config.setBlockWhenExhausted(true);//连接耗尽的时候，是否阻塞，false会抛出异常，true阻塞直到超时。默认为true。
 
         // TODO: 2020/10/14 阿里云
-//        pool = new redis.clients.jedis.JedisPool(config, redisIp, redisPort, 1000 * 2,redisPassword);
+        pool = new redis.clients.jedis.JedisPool(config, redisIp, redisPort, 1000 * 2,redisPassword);
 
 //        // TODO: 2020/10/14 线下
-        pool = new redis.clients.jedis.JedisPool(config, redisIp, redisPort, 1000 * 2);
+//        pool = new redis.clients.jedis.JedisPool(config, redisIp, redisPort, 1000 * 2);
     }
 
     static {

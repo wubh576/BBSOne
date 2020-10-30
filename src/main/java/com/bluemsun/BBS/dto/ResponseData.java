@@ -1,4 +1,4 @@
-package com.bluemsun.BBS.entity;
+package com.bluemsun.BBS.dto;
 
 public class ResponseData {
 

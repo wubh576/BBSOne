@@ -60,6 +60,10 @@ public class ServerResponse<T> implements Serializable {
         return new ServerResponse<T>(ResponseEnum.SUCCESS.getCode(), msg);
     }
 
+    public static <T> ServerResponse<T> createBySuccessCodeMessage(int successCode,String msg) {
+        return new ServerResponse<T>(successCode, msg);
+    }
+
     public static <T> ServerResponse<T> createBySuccess(T data) {
         return new ServerResponse<T>(ResponseEnum.SUCCESS.getCode(), data);
     }

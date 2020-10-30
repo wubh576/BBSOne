@@ -2,7 +2,7 @@ package com.bluemsun.BBS.web.reception;
 
 import com.bluemsun.BBS.common.Const;
 import com.bluemsun.BBS.common.ServerResponse;
-import com.bluemsun.BBS.entity.ResponseData;
+import com.bluemsun.BBS.dto.ResponseData;
 import com.bluemsun.BBS.entity.User;
 import com.bluemsun.BBS.service.UserService;
 import com.bluemsun.BBS.util.*;

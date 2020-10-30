@@ -46,7 +46,7 @@ public class CommentServiceImpl implements CommentService {
             Blog blog = blogDao.blogInfoByBlogId(blogId);
             int blogComment = blog.getBlogComment();
             blogComment++;
-            blogDao.increaseBlogComment(blogId, blogComment);
+            blogDao.increaseBlogCommentOrHotOrLike(blogId, blogComment, 0, 0);
             return ServerResponse.createBySuccessMessage("一级评论成功");
         }
         return ServerResponse.createByErrorMessage("发生错误，一级评论失败");
@@ -74,7 +74,7 @@ public class CommentServiceImpl implements CommentService {
             Blog blog = blogDao.blogInfoByBlogId(blogId);
             int blogComment = blog.getBlogComment();
             blogComment++;
-            blogDao.increaseBlogComment(blogId, blogComment);
+            blogDao.increaseBlogCommentOrHotOrLike(blogId, blogComment, 0, 0);
             return ServerResponse.createBySuccessMessage("二级评论成功");
         }
         return ServerResponse.createByErrorMessage("发生错误，二级评论失败");

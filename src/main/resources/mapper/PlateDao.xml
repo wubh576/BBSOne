@@ -37,7 +37,15 @@
         <if test="plateName!=null">
             WHERE `plate_name` LIKE #{plateName}
         </if>
-        LIMIT 0,10
+        LIMIT #{startIndex},#{pageSize}
+    </select>
+
+    <select id="countList" resultType="int">
+        SELECT count(1)
+        FROM tb_plate
+        <if test="plateName!=null">
+            WHERE `plate_name` LIKE #{plateName}
+        </if>
     </select>
 
     <select id="indexHotPlate" resultType="com.bluemsun.BBS.entity.Plate">
@@ -65,5 +73,98 @@
         SELECT count(1)
         FROM tb_plate
     </select>
+
+    <select id="plateShow" resultType="com.bluemsun.BBS.dto.PlateShow">
+        SELECT `plate_id`,`plate_name`,`plate_img`,`plate_desc`,`create_time`,`plate_hot`
+        FROM tb_plate
+        WHERE `plate_id` = #{plateId}
+    </select>
+    <select id="plateShowUser" resultType="com.bluemsun.BBS.entity.User">
+        SELECT u.username
+        FROM tb_plateAndUser pU
+        JOIN tb_user u ON pU.user_id = u.user_id
+        WHERE `plate_id` = #{plateId}
+    </select>
+
+    <update id="increasePlateHot" parameterType="int">
+        UPDATE tb_plate
+        SET plate_hot = #{plateHot}
+        WHERE plate_id = #{plateId}
+    </update>
+
+    <select id="selectPlate" resultType="com.bluemsun.BBS.entity.Plate">
+        SELECT `plate_id`,`plate_name`,`plate_img`,`plate_desc`,`create_time`,`last_edit_time`,`plate_topping`,`plate_hot`,`plate_status`,`plate_status_info`
+        FROM tb_plate
+        WHERE `plate_id` = #{plateId}
+    </select>
+
+    <select id="listPlateName" resultType="com.bluemsun.BBS.dto.PlateIdAndName">
+        SELECT pla.plate_id,p.plate_name
+        FROM tb_plateAndUser pla
+        JOIN tb_plate p ON pla.plate_id = p.plate_id
+        WHERE pla.user_id = #{userId}
+    </select>
+
+    <update id="updatePlate" parameterType="com.bluemsun.BBS.entity.Plate">
+        UPDATE tb_plate
+        <set>
+            <if test="plateName != null">
+                `plate_name` = #{plateName,jdbcType=VARCHAR},
+            </if>
+            <if test="plateImg != null">
+                `plate_img` = #{plateImg,jdbcType=VARCHAR},
+            </if>
+            <if test="plateDesc != null">
+                `plate_desc` = #{plateDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="plateTopping != 0">
+                `plate_topping` = #{plateTopping,jdbcType=INTEGER},
+            </if>
+            <if test="plateStatus != 0">
+                `plate_status` = #{plateStatus,jdbcType=INTEGER},
+            </if>
+            <if test="plateStatusInfo != null">
+                `plate_status_info` = #{plateStatusInfo,jdbcType=VARCHAR},
+            </if>
+            `last_edit_time` = now()
+        </set>
+        WHERE `plate_id` = #{plateId,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deletePlate" parameterType="int">
+        DELETE FROM tb_plate
+		WHERE plate_id = #{plateId}
+    </delete>
+
+    <select id="pagePlate" resultType="com.bluemsun.BBS.dto.PlatePageForAdmin">
+        SELECT
+        `plate_id`,`plate_name`,`plate_img`,`plate_desc`,`create_time`,`last_edit_time`,`plate_topping`,`plate_hot`,`plate_status`,`plate_status_info`
+        FROM tb_plate
+        <if test="plateName != null">
+            WHERE `plate_name` LIKE #{plateName}
+        </if>
+        LIMIT #{startIndex},#{pageSize}
+    </select>
+
+    <select id="countPagePlate" resultType="int">
+        SELECT count(1)
+        FROM tb_plate
+        <if test="plateName != null">
+            WHERE `plate_name` LIKE #{plateName}
+        </if>
+    </select>
+
+    <select id="checkModerator" parameterType="int" resultType="com.bluemsun.BBS.dto.UserIdAndName">
+        SELECT u.user_id,u.username
+        FROM tb_plateAndUser p
+        JOIN tb_user u ON u.user_id = p.user_id
+        WHERE `plate_id` = #{plateId}
+    </select>
+
+    <update id="delPlateTopping" parameterType="int">
+        UPDATE tb_plate
+        SET `plate_topping` = 0
+        WHERE `plate_id` = #{plateId}
+    </update>
 
 </mapper>

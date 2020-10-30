@@ -5,12 +5,15 @@
 <mapper namespace="com.bluemsun.BBS.dao.PageDao">
 
     <select id="pageIndexBlog" resultType="com.bluemsun.BBS.dto.BlogPage">
-        SELECT b.blog_id,b.blog_title,b.blog_hot,p.plate_name,u.username
+        SELECT b.blog_topping,b.blog_id,b.blog_title,b.blog_hot,p.plate_name,u.username,u.profile_img,u.user_rank,b.create_time,b.blog_like,b.blog_comment
         FROM tb_blog b
         JOIN tb_plate p ON b.blog_plate_id=p.plate_id
         JOIN tb_user u ON b.blog_author_id=u.user_id
         <if test="userId != 0">
             WHERE b.blog_author_id=#{userId}
+        </if>
+        <if test="plateId != 0">
+            WHERE b.blog_plate_id = #{plateId}
         </if>
         LIMIT #{startIndex},#{pageSize}
     </select>
@@ -22,6 +25,9 @@
         JOIN tb_user u ON b.blog_author_id=u.user_id
         <if test="userId != 0">
             WHERE b.blog_author_id=#{userId}
+        </if>
+        <if test="plateId != 0">
+            WHERE b.blog_plate_id = #{plateId}
         </if>
     </select>
 

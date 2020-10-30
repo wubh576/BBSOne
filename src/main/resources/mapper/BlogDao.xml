@@ -17,21 +17,71 @@
     </select>
 
     <select id="viewBlogByBlogId" resultType="com.bluemsun.BBS.dto.BlogAndUser">
-        SELECT b.blog_id,b.blog_title,b.blog_author_id,b.create_time,b.blog_content,u.username,u.profile_img,u.user_rank
+        SELECT b.blog_id,b.blog_title,b.blog_author_id,b.create_time,b.blog_content,b.blog_hot,b.blog_comment,blog_like,u.username,u.profile_img,u.user_rank,p.plate_name
 		FROM tb_blog b
 		JOIN tb_user u ON b.blog_author_id=u.user_id
+		JOIN tb_plate p ON b.blog_plate_id=p.plate_id
 		WHERE blog_id = #{blogId}
     </select>
-    <insert id="insertBlogFile" parameterType="com.bluemsun.BBS.entity.BlogFile">
-        INSERT INTO
-		tb_blog_file(`blog_id`,`url`)
-		VALUES
-		(#{blogId},#{url})
-    </insert>
 
-    <update id="increaseBlogComment">
+    <update id="increaseBlogCommentOrHotOrLike" parameterType="int">
         UPDATE tb_blog
-        SET blog_comment = #{blogComment}
+        <set>
+            <if test="blogComment != 0">
+                blog_comment = #{blogComment}
+            </if>
+            <if test="blogHot != 0">
+                blog_hot = #{blogHot}
+            </if>
+            <if test="blogLike != 0">
+                blog_like = #{blogLike}
+            </if>
+        </set>
         WHERE blog_id = #{blogId}
     </update>
+
+    <update id="decreaseBlogLikeToZero" parameterType="int">
+        UPDATE tb_blog
+        SET `blog_like` = 0
+        WHERE `blog_id` = #{blogId}
+    </update>
+
+    <delete id="delBlogByBlogId" parameterType="int">
+        DELETE FROM tb_blog
+        WHERE `blog_id` = #{blogId}
+    </delete>
+
+    <update id="adminUpdateBlogByBlogId" parameterType="com.bluemsun.BBS.entity.Blog">
+        UPDATE tb_blog
+        <set>
+            <if test="blogTopping != null">
+                `blog_topping` = #{blogTopping}
+            </if>
+            <if test="blogPlateId != null">
+                `blog_plate_id` = #{blogPlateId}
+            </if>
+            <if test="blogStatus != null">
+                `blog_status` = #{blogStatus}
+            </if>
+            <if test="blogStatusInfo != null">
+                `blog_status_info` = #{blogStatusInfo}
+            </if>
+        </set>
+        WHERE `blog_id` = #{blogId}
+    </update>
+
+    <select id="pageBlogByBlogTitle" resultType="com.bluemsun.BBS.dto.BlogPage">
+        SELECT b.blog_id,b.blog_title,b.blog_hot,p.plate_name,u.username,u.profile_img,u.user_rank,b.create_time,b.blog_like,b.blog_comment
+        FROM tb_blog b
+        JOIN tb_plate p ON b.blog_plate_id=p.plate_id
+        JOIN tb_user u ON b.blog_author_id=u.user_id
+        WHERE `blog_title` LIKE #{blogTitle}
+        LIMIT #{startIndex},#{pageSize}
+    </select>
+
+    <select id="countPageBlogByBlogTitle" resultType="int">
+        SELECT count(1)
+        FROM tb_blog
+        WHERE `blog_title` LIKE #{blogTitle}
+    </select>
 </mapper>

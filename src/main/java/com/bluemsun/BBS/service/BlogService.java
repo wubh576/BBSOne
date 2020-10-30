@@ -2,12 +2,8 @@ package com.bluemsun.BBS.service;
 
 import com.bluemsun.BBS.common.ServerResponse;
 import com.bluemsun.BBS.dto.BlogAndUser;
-import com.bluemsun.BBS.dto.BlogPage;
-import com.bluemsun.BBS.dto.PlateIdAndName;
+import com.bluemsun.BBS.dto.PageDto;
 import com.bluemsun.BBS.entity.Blog;
-import com.bluemsun.BBS.entity.BlogFile;
-
-import java.util.List;
 
 public interface BlogService {
 
@@ -27,18 +23,42 @@ public interface BlogService {
      */
     ServerResponse<BlogAndUser> viewBlogByBlogId(int blogId);
 
-//    /**
-//     * 插入Blog图片
-//     *
-//     * @param blogFile
-//     * @return
-//     */
-//    ServerResponse<String> insertBlogFile(BlogFile blogFile);
-
     /**
      * 选择博客对应板块
      *
      * @return
      */
-    ServerResponse<List<PlateIdAndName>> selectList(String plateName);
+    ServerResponse<PageDto> selectList(String plateName, int pageNo, int pageSize);
+
+    /**
+     * 通过板块id展示该板块的博客分页
+     *
+     * @param plateId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    ServerResponse<PageDto> pageBlogByPlateId(int plateId, int pageNo, int pageSize);
+
+    ServerResponse<String> increaseBlogHot(int blogId);
+
+    ServerResponse<String> delBlogByBlogId(int blogId);
+
+    /**
+     * 管理员更改博客信息
+     *
+     * @param blog
+     * @return
+     */
+    ServerResponse<Blog> adminUpdateBlogByBlogId(Blog blog);
+
+    /**
+     * 首页模糊搜索博客题目
+     *
+     * @param blogTitle
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    ServerResponse<PageDto> pageBlogByBlogTitle(String blogTitle, int pageNo, int pageSize);
 }

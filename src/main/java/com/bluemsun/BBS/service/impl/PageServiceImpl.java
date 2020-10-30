@@ -27,8 +27,8 @@ public class PageServiceImpl implements PageService {
     public ServerResponse<PageDto> pageIndexBlog(int pageNo, int pageSize) {
         int startIndex = (pageNo - 1) * pageSize;
         int userId = 0;
-        List<BlogPage> list = pageDao.pageIndexBlog(startIndex, pageSize, userId);
-        int count = pageDao.pageIndexBlogCount(userId);
+        List<BlogPage> list = pageDao.pageIndexBlog(startIndex, pageSize, userId,0);
+        int count = pageDao.pageIndexBlogCount(userId,0);
         PageDto pageDto = new PageDto();
         pageDto.setCount(count);
         pageDto.setList(list);
@@ -44,8 +44,8 @@ public class PageServiceImpl implements PageService {
     @Override
     public ServerResponse<PageDto> pageBlogByUserId(int userId, int pageNo, int pageSize) {
         int startIndex = (pageNo - 1) * pageSize;
-        List<BlogPage> list = pageDao.pageIndexBlog(startIndex, pageSize, userId);
-        int count = pageDao.pageIndexBlogCount(userId);
+        List<BlogPage> list = pageDao.pageIndexBlog(startIndex, pageSize, userId,0);
+        int count = pageDao.pageIndexBlogCount(userId,0);
         PageDto pageDto = new PageDto();
         pageDto.setCount(count);
         pageDto.setList(list);

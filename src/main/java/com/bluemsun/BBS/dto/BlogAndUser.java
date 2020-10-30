@@ -14,6 +14,12 @@ public class BlogAndUser {
     private String profileImg;
     private Integer userRank;
 
+    private Integer blogHot;
+    private Integer blogLike;
+    private Integer blogComment;
+
+    private String plateName;
+
     public Integer getBlogId() {
         return blogId;
     }
@@ -78,6 +84,38 @@ public class BlogAndUser {
         this.userRank = userRank;
     }
 
+    public Integer getBlogHot() {
+        return blogHot;
+    }
+
+    public void setBlogHot(Integer blogHot) {
+        this.blogHot = blogHot;
+    }
+
+    public Integer getBlogLike() {
+        return blogLike;
+    }
+
+    public void setBlogLike(Integer blogLike) {
+        this.blogLike = blogLike;
+    }
+
+    public Integer getBlogComment() {
+        return blogComment;
+    }
+
+    public void setBlogComment(Integer blogComment) {
+        this.blogComment = blogComment;
+    }
+
+    public String getPlateName() {
+        return plateName;
+    }
+
+    public void setPlateName(String plateName) {
+        this.plateName = plateName;
+    }
+
     @Override
     public String toString() {
         return "BlogAndUser{" +
@@ -89,6 +127,10 @@ public class BlogAndUser {
                 ", username='" + username + '\'' +
                 ", profileImg='" + profileImg + '\'' +
                 ", userRank=" + userRank +
+                ", blogHot=" + blogHot +
+                ", blogLike=" + blogLike +
+                ", blogComment=" + blogComment +
+                ", plateName='" + plateName + '\'' +
                 '}';
     }
 }

@@ -2,7 +2,7 @@ package com.bluemsun.BBS.web.reception;
 
 import com.bluemsun.BBS.common.ServerResponse;
 import com.bluemsun.BBS.dto.BlogAndUser;
-import com.bluemsun.BBS.dto.PlateIdAndName;
+import com.bluemsun.BBS.dto.PageDto;
 import com.bluemsun.BBS.entity.Blog;
 import com.bluemsun.BBS.entity.Plate;
 import com.bluemsun.BBS.entity.User;
@@ -12,13 +12,9 @@ import com.bluemsun.BBS.util.RedisPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 @Controller
 @RequestMapping("/blog")
@@ -75,35 +71,67 @@ public class BlogController {
      * @param httpServletRequest
      * @return
      */
-    @RequestMapping(value = "/selectPlate.do", method = RequestMethod.POST)
+    @RequestMapping(value = "/selectPlate.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<List<PlateIdAndName>> selectPlate(HttpServletRequest httpServletRequest) {
+    public ServerResponse<PageDto> selectPlate(@RequestParam("pageNo") int pageNo, @RequestParam("pageSize") int pageSize, HttpServletRequest httpServletRequest) {
         String loginToken = httpServletRequest.getHeader("token");
         String jsonStr = RedisPoolUtil.get(loginToken);
         if (StringUtils.isEmpty(jsonStr)) {
             return ServerResponse.createByErrorNotLogin();
         }
         String str = null;
-        ServerResponse<List<PlateIdAndName>> response = blogService.selectList(str);
+        ServerResponse<PageDto> response = blogService.selectList(str, pageNo, pageSize);
         return response;
     }
 
     /**
      * 简单模糊查询
      *
-     * @param plate
+     * @param plateName
+     * @param pageNo
+     * @param pageSize
      * @param httpServletRequest
      * @return
      */
-    @RequestMapping(value = "/searchPlateForBlog.do", method = RequestMethod.POST)
+    @RequestMapping(value = "/searchPlateForBlog.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<List<PlateIdAndName>> searchPlateForBlog(@RequestBody Plate plate, HttpServletRequest httpServletRequest) {
+    public ServerResponse<PageDto> searchPlateForBlog(@RequestParam("plateName") String plateName, @RequestParam("pageNo") int pageNo, @RequestParam("pageSize") int pageSize, HttpServletRequest httpServletRequest) {
         String loginToken = httpServletRequest.getHeader("token");
         String jsonStr = RedisPoolUtil.get(loginToken);
         if (StringUtils.isEmpty(jsonStr)) {
             return ServerResponse.createByErrorNotLogin();
         }
-        ServerResponse<List<PlateIdAndName>> response = blogService.selectList(plate.getPlateName());
+        ServerResponse<PageDto> response = blogService.selectList(plateName, pageNo, pageSize);
+        return response;
+    }
+
+    /**
+     * 通过板块id展示该板块的博客分页
+     *
+     * @param plateId
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/pageBlogByPlateId", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageDto> pageBlogByPlateId(@RequestParam("plateId") int plateId, @RequestParam("pageNo") int pageNo, @RequestParam("pageSize") int pageSize) {
+        ServerResponse<PageDto> response = blogService.pageBlogByPlateId(plateId, pageNo, pageSize);
+        return response;
+    }
+
+    /**
+     * 首页模糊搜索博客题目
+     *
+     * @param blogTitle
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/pageBlogByBlogTitle", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageDto> pageBlogByBlogTitle(@RequestParam("blogTitle") String blogTitle, @RequestParam("pageNo") int pageNo, @RequestParam("pageSize") int pageSize) {
+        ServerResponse<PageDto> response = blogService.pageBlogByBlogTitle(blogTitle, pageNo, pageSize);
         return response;
     }
 }

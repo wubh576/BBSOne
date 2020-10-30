@@ -26,6 +26,9 @@
         <property name="checkoutTimeout" value="10000"/>
         <!-- 当获取连接失败重试次数 -->
         <property name="acquireRetryAttempts" value="2"/>
+
+        <property name="maxIdleTime" value="60"/>
+        <property name="idleConnectionTestPeriod" value="60"/>
     </bean>
 
     <!-- 3.配置SqlSessionFactory对象 -->

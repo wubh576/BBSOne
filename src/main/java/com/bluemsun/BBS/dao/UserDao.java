@@ -1,7 +1,12 @@
 package com.bluemsun.BBS.dao;
 
+import com.bluemsun.BBS.dto.PageUserForAdmin;
+import com.bluemsun.BBS.dto.PlateIdAndName;
+import com.bluemsun.BBS.entity.PlateAndUser;
 import com.bluemsun.BBS.entity.User;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface UserDao {
 
@@ -58,5 +63,27 @@ public interface UserDao {
      */
     int checkEmail(String email);
 
+    /**
+     * 管理员删除通过用户id删除用户
+     *
+     * @param userId
+     * @return
+     */
+    int delUserByUserId(int userId);
 
+    int insertModerator(@Param("userId") int userId,@Param("plateId") int plateId);
+
+    int countModerator(int plateId);
+
+    List<PlateAndUser> selectModerator(int plateId);
+
+    int judgeModerator(@Param("userId") int userId,@Param("plateId") int plateId);
+
+    int delModerator(@Param("userId") int userId,@Param("plateId") int plateId);
+
+    List<PageUserForAdmin> listUser(@Param("username") String username, @Param("startIndex") int startIndex, @Param("pageSize") int pageSize);
+
+    int countUser(@Param("username") String username);
+
+    List<PlateIdAndName> checkManagePlate(int userId);
 }

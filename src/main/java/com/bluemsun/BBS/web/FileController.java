@@ -46,10 +46,10 @@ public class FileController {
         }
         //上传的位置
         //todo 阿里云
-//        String path = "/usr/lib/tomcat8/tomcat8.5.58/webapps/uploads/";
+        String path = "/usr/lib/tomcat8/tomcat8.5.58/webapps/uploads/";
 //        测试图片路径    sftp://182.92.99.10//usr/lib/tomcat8/tomcat8.5.58/webapps/uploads/test.jpg
 //        //todo 线下
-        String path = httpServletRequest.getSession().getServletContext().getRealPath("/uploads/");
+//        String path = httpServletRequest.getSession().getServletContext().getRealPath("/uploads/");
         //判断路径是否存在
         File file = new File(path);
         if (!file.exists()) {
@@ -63,12 +63,11 @@ public class FileController {
         //新文件名
         filename = UUID.randomUUID() + suffix;
         //完成文件上传
-
         mfile.transferTo(new File(path, filename));
         // TODO: 2020/10/14 阿里云
-//        String url = "http://bluemsum.tech:8080/uploads/" + filename;
+        String url = "http://bluemsum.tech:8080/uploads/" + filename;
         // TODO: 2020/10/14 线下
-        String url = "http://bluesun.natapp1.cc/uploads/" + filename;
+//        String url = "http://bluesun.natapp1.cc/uploads/" + filename;
         return ServerResponse.createBySuccess("上传成功", url);
     }
 
@@ -94,10 +93,10 @@ public class FileController {
         User user = JsonUtil.string2Obj(jsonStr,User.class);
         //上传的位置
         //todo 阿里云
-//        String path = "/usr/lib/tomcat8/tomcat8.5.58/webapps/uploads/";
+        String path = "/usr/lib/tomcat8/tomcat8.5.58/webapps/uploads/";
         //测试图片路径    sftp://182.92.99.10//usr/lib/tomcat8/tomcat8.5.58/webapps/uploads/test.jpg
         //todo 线下
-        String path = httpServletRequest.getSession().getServletContext().getRealPath("/uploads/");
+//        String path = httpServletRequest.getSession().getServletContext().getRealPath("/uploads/");
         //判断路径是否存在
         File file = new File(path);
         if (!file.exists()) {
@@ -113,9 +112,10 @@ public class FileController {
         //完成文件上传
         mfile.transferTo(new File(path, filename));
         // TODO: 2020/10/14 阿里云
-//        String url = "http://bluemsum.tech:8080/uploads/" + filename;
+        String url = "http://bluemsum.tech:8080/uploads/" + filename;
         // TODO: 2020/10/14 线下
-        String url = "http://bluesun.natapp1.cc/uploads/" + filename;
+//        String url = "http:/
+//        /bluesun.natapp1.cc/uploads/" + filename;
         //进行用户信息更新
         User user1 = new User();
         user1.setUserId(user.getUserId());
