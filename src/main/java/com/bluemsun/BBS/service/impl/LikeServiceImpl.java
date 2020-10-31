@@ -6,6 +6,8 @@ import com.bluemsun.BBS.dao.LikeDao;
 import com.bluemsun.BBS.entity.Blog;
 import com.bluemsun.BBS.entity.LikeBlog;
 import com.bluemsun.BBS.service.LikeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,8 @@ public class LikeServiceImpl implements LikeService {
     @Autowired
     private BlogDao blogDao;
 
+    private static Logger logger = LoggerFactory.getLogger(LikeServiceImpl.class);
+
     /**
      * 博客点赞/取消点赞
      *
@@ -28,6 +32,7 @@ public class LikeServiceImpl implements LikeService {
      */
     @Override
     public ServerResponse<String> blogLike(int userId, int blogId) {
+        logger.info("start");
         //先判断该用户是否已经点过赞
         List<LikeBlog> list = likeDao.selectLike(userId);
         int count = 0;
@@ -86,7 +91,7 @@ public class LikeServiceImpl implements LikeService {
                 }
             }
         }
-
+        logger.info("end");
         return ServerResponse.createByErrorMessage("发生错误");
     }
 

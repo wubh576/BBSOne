@@ -57,4 +57,6 @@ public interface BlogDao {
 
     int countPageBlogByBlogTitle(@Param("blogTitle")String blogTitle);
 
+    int updateBlog(Blog blog);
+
 }

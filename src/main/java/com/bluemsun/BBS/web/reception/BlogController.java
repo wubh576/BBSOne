@@ -4,7 +4,6 @@ import com.bluemsun.BBS.common.ServerResponse;
 import com.bluemsun.BBS.dto.BlogAndUser;
 import com.bluemsun.BBS.dto.PageDto;
 import com.bluemsun.BBS.entity.Blog;
-import com.bluemsun.BBS.entity.Plate;
 import com.bluemsun.BBS.entity.User;
 import com.bluemsun.BBS.service.BlogService;
 import com.bluemsun.BBS.util.JsonUtil;
@@ -60,8 +59,17 @@ public class BlogController {
      */
     @RequestMapping(value = "/viewBlogByBlogId", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<BlogAndUser> viewBlogByBlogId(@RequestBody Blog blog) {
-        ServerResponse<BlogAndUser> response = blogService.viewBlogByBlogId(blog.getBlogId());
+    public ServerResponse<BlogAndUser> viewBlogByBlogId(@RequestBody Blog blog,HttpServletRequest httpServletRequest) {
+        String loginToken = httpServletRequest.getHeader("token");
+        String jsonStr = RedisPoolUtil.get(loginToken);
+        int userId;
+        if(StringUtils.isEmpty(jsonStr)) {
+            userId = 0;
+        } else {
+            User user = JsonUtil.string2Obj(jsonStr,User.class);
+            userId = user.getUserId();
+        }
+        ServerResponse<BlogAndUser> response = blogService.viewBlogByBlogId(blog.getBlogId(), userId);
         return response;
     }
 

@@ -30,7 +30,7 @@ public class RedisPool {
         // TODO: 2020/10/14 阿里云
         pool = new redis.clients.jedis.JedisPool(config, redisIp, redisPort, 1000 * 2,redisPassword);
 
-//        // TODO: 2020/10/14 线下
+        // TODO: 2020/10/14 线下
 //        pool = new redis.clients.jedis.JedisPool(config, redisIp, redisPort, 1000 * 2);
     }
 

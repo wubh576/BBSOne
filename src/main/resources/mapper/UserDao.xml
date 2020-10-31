@@ -121,4 +121,11 @@
 		JOIN tb_plate p ON p.plate_id = u.plate_id
 		WHERE u.user_id = #{userId}
 	</select>
+
+	<select id="checkModerator" resultType="com.bluemsun.BBS.dto.UserIdAndName">
+		SELECT p.user_id,u.username
+		FROM tb_plateAndUser p
+		JOIN tb_user u ON p.user_id = u.user_id
+		WHERE `plate_id` = #{plateId}
+	</select>
 </mapper>

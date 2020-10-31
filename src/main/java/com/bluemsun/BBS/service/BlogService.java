@@ -19,9 +19,10 @@ public interface BlogService {
      * 通过blogId查询blog信息
      *
      * @param blogId
+     * @param userId
      * @return
      */
-    ServerResponse<BlogAndUser> viewBlogByBlogId(int blogId);
+    ServerResponse<BlogAndUser> viewBlogByBlogId(int blogId,int userId);
 
     /**
      * 选择博客对应板块
@@ -61,4 +62,6 @@ public interface BlogService {
      * @return
      */
     ServerResponse<PageDto> pageBlogByBlogTitle(String blogTitle, int pageNo, int pageSize);
+
+    ServerResponse<Blog> updateBlog(Blog blog);
 }

@@ -71,4 +71,22 @@
         ORDER BY `second_create_time` DESC
         LIMIT #{startIndex},#{pageSize}
     </select>
+
+    <select id="checkDelComment" resultType="int">
+        SELECT count(1)
+        FROM tb_blog
+        WHERE `blog_id` = #{blogId}
+        AND `blog_author_id` = #{userId}
+    </select>
+
+    <delete id="delFirstComment" parameterType="int">
+        DELETE FROM tb_first_comment
+        WHERE `first_comment_id` = #{firstCommentId}
+    </delete>
+
+    <delete id="delSecondComment" parameterType="int">
+        DELETE FROM tb_second_comment
+        WHERE `second_comment_id` = #{secondCommentId}
+    </delete>
+
 </mapper>

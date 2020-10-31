@@ -33,13 +33,13 @@
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize" value="10485760"></property>
     </bean>
-
+    <!-- 定义在这里的，所有的都会拦截-->
     <mvc:interceptors>
-        <!-- 定义在这里的，所有的都会拦截-->
+        <!--管理员权限控制器-->
         <mvc:interceptor>
             <mvc:mapping path="/admin/**"/>
             <bean id="AdminInterceptor"
-                    class="com.bluemsun.BBS.web.backstage.superAdmin.adminInterceptor.AdminInterceptor" />
+                  class="com.bluemsun.BBS.web.backstage.superAdmin.adminInterceptor.AdminInterceptor"/>
         </mvc:interceptor>
     </mvc:interceptors>
 

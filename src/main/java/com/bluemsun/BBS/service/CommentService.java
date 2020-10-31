@@ -51,4 +51,7 @@ public interface CommentService {
      */
     ServerResponse<PageDto> closeSecondComment(int secondFirstId);
 
+    ServerResponse<String> delFirstComment(int firstCommentId);
+
+    ServerResponse<String> delSecondComment(int secondCommentId);
 }

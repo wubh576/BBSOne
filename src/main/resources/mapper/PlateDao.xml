@@ -167,4 +167,11 @@
         WHERE `plate_id` = #{plateId}
     </update>
 
+    <select id="plateList" resultType="com.bluemsun.BBS.dto.PlateIdAndName">
+        SELECT u.plate_id,p.plate_name
+        FROM tb_plateAndUser u
+        JOIN tb_plate p ON u.plate_id = p.plate_id
+        WHERE `user_id` = #{userId}
+    </select>
+
 </mapper>

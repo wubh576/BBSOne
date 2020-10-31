@@ -19,6 +19,7 @@ public class BlogAndUser {
     private Integer blogComment;
 
     private String plateName;
+    private Integer plateId;
 
     public Integer getBlogId() {
         return blogId;
@@ -116,6 +117,14 @@ public class BlogAndUser {
         this.plateName = plateName;
     }
 
+    public Integer getPlateId() {
+        return plateId;
+    }
+
+    public void setPlateId(Integer plateId) {
+        this.plateId = plateId;
+    }
+
     @Override
     public String toString() {
         return "BlogAndUser{" +
@@ -131,6 +140,7 @@ public class BlogAndUser {
                 ", blogLike=" + blogLike +
                 ", blogComment=" + blogComment +
                 ", plateName='" + plateName + '\'' +
+                ", plateId=" + plateId +
                 '}';
     }
 }

@@ -2,6 +2,7 @@ package com.bluemsun.BBS.dao;
 
 import com.bluemsun.BBS.dto.PageUserForAdmin;
 import com.bluemsun.BBS.dto.PlateIdAndName;
+import com.bluemsun.BBS.dto.UserIdAndName;
 import com.bluemsun.BBS.entity.PlateAndUser;
 import com.bluemsun.BBS.entity.User;
 import org.apache.ibatis.annotations.Param;
@@ -86,4 +87,6 @@ public interface UserDao {
     int countUser(@Param("username") String username);
 
     List<PlateIdAndName> checkManagePlate(int userId);
+
+    List<UserIdAndName> checkModerator(int plateId);
 }

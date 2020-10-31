@@ -2,8 +2,11 @@ package com.bluemsun.BBS.service;
 
 import com.bluemsun.BBS.common.ServerResponse;
 import com.bluemsun.BBS.dto.PageDto;
+import com.bluemsun.BBS.dto.PlateIdAndName;
 import com.bluemsun.BBS.dto.PlateShow;
 import com.bluemsun.BBS.entity.Plate;
+
+import java.util.List;
 
 public interface PlateService {
 
@@ -97,4 +100,16 @@ public interface PlateService {
      * @return
      */
     ServerResponse<Plate> delPlateTopping(int plateId);
+
+    /**
+     * 版主查看我所管理的板块
+     *
+     * @param userId
+     * @return
+     */
+    ServerResponse<List<PlateIdAndName>> plateList(int userId);
+
+    ServerResponse<Plate> plateInfo(int plateId);
+
+    ServerResponse<PageDto> pageBlogByPlateId(int plateId,int pageNo,int pageSize);
 }

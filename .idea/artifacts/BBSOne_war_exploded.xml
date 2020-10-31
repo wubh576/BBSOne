@@ -1,6 +1,13 @@
 <component name="ArtifactManager">
   <artifact type="exploded-war" name="BBSOne:war exploded">
-    <output-path>$PROJECT_DIR$/out/artifacts/BBSOne_war_exploded</output-path>
+    <output-path>$PROJECT_DIR$/target/BBSOne</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <exploded>true</exploded>
+        <module>BBSOne</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
     <root id="root">
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
@@ -43,6 +50,9 @@
           <element id="library" level="project" name="Maven: com.sun.mail:javax.mail:1.6.2" />
           <element id="library" level="project" name="Maven: javax.activation:activation:1.1.1" />
         </element>
+      </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/target/BBSOne/META-INF/MANIFEST.MF" />
       </element>
       <element id="javaee-facet-resources" facet="BBSOne/web/Web" />
     </root>

@@ -112,5 +112,7 @@ public interface PlateDao {
 
     int delPlateTopping(int plateId);
 
+    List<PlateIdAndName> plateList(int userId);
+
 
 }

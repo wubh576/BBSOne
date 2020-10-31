@@ -72,4 +72,9 @@ public interface CommentDao {
      */
     List<SecondCommentAndUser> pageSecondCommentByCreateTime(@Param("secondFirstId") int secondFirstId, @Param("startIndex") int startIndex, @Param("pageSize") int pageSize);
 
+    int checkDelComment(@Param("userId") int userId,@Param("blogId") int blogId);
+
+    int delFirstComment(int firstCommentId);
+
+    int delSecondComment(int secondCommentId);
 }

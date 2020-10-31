@@ -10,6 +10,8 @@ import com.bluemsun.BBS.entity.PlateAndUser;
 import com.bluemsun.BBS.entity.User;
 import com.bluemsun.BBS.service.UserService;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PlateDao plateDao;
 
+    private static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
     /**
      * 用户登陆
      *
@@ -31,6 +35,7 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     public ServerResponse<User> login(User user) {
+        logger.info("start");
         if (user == null) {
             return ServerResponse.createByErrorMessage("账号为空");
         }
@@ -39,6 +44,8 @@ public class UserServiceImpl implements UserService {
         if (user1 == null) {
             return ServerResponse.createByErrorMessage("登陆失败，用户名或密码错误");
         }
+        logger.debug("登陆用户信息为{}",user1.toString());
+        logger.info("end");
         return ServerResponse.createBySuccess("登陆成功", user1);
     }
 
@@ -50,7 +57,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public ServerResponse<String> checkUsername(String username) {
-        if (username == "") {
+        if (StringUtils.isEmpty(username)) {
             return ServerResponse.createByErrorCodeMessage(2, "用户名为空");
         }
         int result = userDao.checkUsername(username);
@@ -68,6 +75,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public ServerResponse<User> register(User user) {
+        logger.info("start");
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(2, "用户为空");
         }
@@ -84,8 +92,11 @@ public class UserServiceImpl implements UserService {
         int result = userDao.insertUser(user);
         if (result == 1) {
             User user1 = userDao.selectLogin(user.getUsername(), user.getPassword());
+            logger.debug("注册的用户信息如下{}",user1.toString());
+            logger.info("end");
             return ServerResponse.createBySuccess("注册成功，用户信息如下", user1);
         }
+        logger.info("end");
         return ServerResponse.createByError();
     }
 

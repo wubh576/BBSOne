@@ -17,7 +17,7 @@
     </select>
 
     <select id="viewBlogByBlogId" resultType="com.bluemsun.BBS.dto.BlogAndUser">
-        SELECT b.blog_id,b.blog_title,b.blog_author_id,b.create_time,b.blog_content,b.blog_hot,b.blog_comment,blog_like,u.username,u.profile_img,u.user_rank,p.plate_name
+        SELECT b.blog_id,b.blog_title,b.blog_author_id,b.create_time,b.blog_content,b.blog_hot,b.blog_comment,blog_like,u.username,u.profile_img,u.user_rank,p.plate_name,p.plate_id
 		FROM tb_blog b
 		JOIN tb_user u ON b.blog_author_id=u.user_id
 		JOIN tb_plate p ON b.blog_plate_id=p.plate_id
@@ -71,7 +71,7 @@
     </update>
 
     <select id="pageBlogByBlogTitle" resultType="com.bluemsun.BBS.dto.BlogPage">
-        SELECT b.blog_id,b.blog_title,b.blog_hot,p.plate_name,u.username,u.profile_img,u.user_rank,b.create_time,b.blog_like,b.blog_comment
+        SELECT b.blog_id,b.blog_title,b.blog_hot,p.plate_name,u.username,u.profile_img,u.user_rank,b.create_time,b.blog_like,b.blog_comment,b.blog_topping
         FROM tb_blog b
         JOIN tb_plate p ON b.blog_plate_id=p.plate_id
         JOIN tb_user u ON b.blog_author_id=u.user_id
@@ -84,4 +84,20 @@
         FROM tb_blog
         WHERE `blog_title` LIKE #{blogTitle}
     </select>
+
+    <update id="updateBlog" parameterType="com.bluemsun.BBS.entity.Blog">
+        UPDATE tb_blog
+        <set>
+            <if test="blogContent != null">
+                `blog_content` = #{blogContent}
+            </if>
+            <if test="blogTitle != null">
+                `blog_title` = #{blogTitle}
+            </if>
+            <if test="blogPlateId != null">
+                `blog_plate_id` = #{blogPlateId}
+            </if>
+        </set>
+        WHERE `blog_id` = #{blogId}
+    </update>
 </mapper>

@@ -11,6 +11,8 @@ import com.bluemsun.BBS.entity.FirstComment;
 import com.bluemsun.BBS.entity.SecondComment;
 import com.bluemsun.BBS.service.CommentService;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,8 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private BlogDao blogDao;
 
+    private static Logger logger = LoggerFactory.getLogger(CommentServiceImpl.class);
+
     /**
      * 新增一级评论
      *
@@ -33,6 +37,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public ServerResponse<FirstComment> insertFirstComment(FirstComment firstComment) {
+        logger.info("start");
         if (firstComment == null) {
             return ServerResponse.createByErrorCodeMessage(3, "firstComment为空");
         }
@@ -41,6 +46,7 @@ public class CommentServiceImpl implements CommentService {
         }
         firstComment.setFirstCreateTime(new Date());
         int result = commentDao.insertFirstComment(firstComment);
+
         if (result == 1) {
             int blogId = firstComment.getFirstBlogId();
             Blog blog = blogDao.blogInfoByBlogId(blogId);
@@ -49,6 +55,7 @@ public class CommentServiceImpl implements CommentService {
             blogDao.increaseBlogCommentOrHotOrLike(blogId, blogComment, 0, 0);
             return ServerResponse.createBySuccessMessage("一级评论成功");
         }
+        logger.info("end");
         return ServerResponse.createByErrorMessage("发生错误，一级评论失败");
     }
 
@@ -60,6 +67,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public ServerResponse<SecondComment> insertSecondComment(SecondComment secondComment) {
+        logger.info("start");
         if (secondComment == null) {
             return ServerResponse.createByErrorCodeMessage(3, "secondComment为空");
         }
@@ -68,6 +76,7 @@ public class CommentServiceImpl implements CommentService {
         }
         secondComment.setSecondCreateTime(new Date());
         int result = commentDao.insertSecondComment(secondComment);
+        logger.debug("插入的二级评论为{}", secondComment.toString());
         if (result == 1) {
             int secondFirstId = secondComment.getSecondFirstId();
             int blogId = commentDao.secondCommentForBlog(secondFirstId);
@@ -77,6 +86,7 @@ public class CommentServiceImpl implements CommentService {
             blogDao.increaseBlogCommentOrHotOrLike(blogId, blogComment, 0, 0);
             return ServerResponse.createBySuccessMessage("二级评论成功");
         }
+        logger.info("end");
         return ServerResponse.createByErrorMessage("发生错误，二级评论失败");
     }
 
@@ -90,6 +100,7 @@ public class CommentServiceImpl implements CommentService {
      * @return
      */
     public ServerResponse<PageDto> pageFirstComment(int firstBlogId, int pageNo, int pageSize) {
+        logger.info("start");
         int startIndex = (pageNo - 1) * pageSize;
         List<PageCommentAndUser> list = commentDao.pageFirstCommentByTime(firstBlogId, startIndex, pageSize);
         int count = commentDao.pageCountFirstComment(firstBlogId);
@@ -102,7 +113,10 @@ public class CommentServiceImpl implements CommentService {
         }
         PageDto pageDto = new PageDto();
         pageDto.setList(list);
+        logger.debug("展示的列表为{}", list);
         pageDto.setCount(count);
+        logger.debug("展示的列表的总数为{}", count);
+        logger.info("end");
         return ServerResponse.createBySuccess("评论展示", pageDto);
     }
 
@@ -116,12 +130,16 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public ServerResponse<PageDto> pageSecondComment(int secondFirstId, int pageNo, int pageSize) {
+        logger.info("start");
         int startIndex = (pageNo - 1) * pageSize;
         List<SecondCommentAndUser> list = commentDao.pageSecondCommentByCreateTime(secondFirstId, startIndex, pageSize);
         int count = commentDao.pageSecondCommentCount(secondFirstId);
         PageDto pageDto = new PageDto();
         pageDto.setList(list);
+        logger.info("展示二级评论的列表为{}", list);
         pageDto.setCount(count);
+        logger.debug("展示总数为{}", count);
+        logger.info("end");
         return ServerResponse.createBySuccess("二级评论分页", pageDto);
     }
 
@@ -133,13 +151,45 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public ServerResponse<PageDto> closeSecondComment(int secondFirstId) {
+        logger.info("start");
         List<SecondCommentAndUser> list = commentDao.pageSecondCommentByCreateTimeForThree(secondFirstId);
         int count = commentDao.pageSecondCommentCount(secondFirstId);
         PageDto pageDto = new PageDto();
+        logger.debug("pageDto为{}", pageDto.toString());
         pageDto.setList(list);
         pageDto.setCount(count);
-        return ServerResponse.createBySuccess("收起二级评论",pageDto);
+        logger.info("end");
+        return ServerResponse.createBySuccess("收起二级评论", pageDto);
     }
 
+    /**
+     * 删除一级评论
+     *
+     * @param firstCommentId
+     * @return
+     */
+    @Override
+    public ServerResponse<String> delFirstComment(int firstCommentId) {
+        int result = commentDao.delFirstComment(firstCommentId);
+        if(result == 1) {
+           return ServerResponse.createBySuccessMessage("删除一级评论成功");
+        }
+        return ServerResponse.createByError();
+    }
+
+    /**
+     * 删除二级评论
+     *
+     * @param secondCommentId
+     * @return
+     */
+    @Override
+    public ServerResponse<String> delSecondComment(int secondCommentId) {
+        int result = commentDao.delSecondComment(secondCommentId);
+        if(result == 1) {
+           return ServerResponse.createBySuccessMessage("删除二级评论成功");
+        }
+        return ServerResponse.createByError();
+    }
 
 }
